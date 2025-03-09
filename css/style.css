@@ -97,7 +97,7 @@ nav ul li a:hover {
 table {
   width: 100%;
   border-collapse: collapse;
-  /* background: #FCF7EC; */
+  background: #FCF7EC;
 }
 
 th, td {
@@ -120,6 +120,17 @@ tr:hover {
   background-color: #AFC2AE;
   color: white;
 }
+/* Стилі для чекбокса */
+table input[type="checkbox"] {
+  transform: scale(1.2); /* Збільшуємо чекбокс */
+  cursor: pointer;
+}
+/* Відступ між іконками */
+td i {
+  margin: 0 8px; /* Додаємо відступи зліва і справа */
+  cursor: pointer;
+}
+
 
 /* Контейнер для заголовка і кнопки */
 .students-header {
@@ -147,3 +158,10 @@ tr:hover {
   background-color: #9BA79C;
 }
 
+/* Виділення активного пункту меню */
+nav ul li a.active {
+  background-color: #AFC2AE; /* Колір із палітри */
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
