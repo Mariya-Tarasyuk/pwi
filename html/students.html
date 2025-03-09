@@ -109,35 +109,37 @@
                     <i class="fa-solid fa-xmark"></i> </td>
                 </tr>
             </table>
-       
+      
+            
+            <div id="addStudentForm" class="hidden">
+                <h3>Add New Student
+                    <i id="closeBtn" class="fa-solid fa-xmark" style="cursor: pointer; float: right;"></i> <!-- Іконка хрестика -->
+                </h3>
+                <form id="studentForm">
+                    <label for="group">Group:</label>
+                    <input type="text" id="group" required>
+                    
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" required>
+                    
+                    <label for="gender">Gender:</label>
+                    <select id="gender" required>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                    
+                    <label for="birthday">Birthday:</label>
+                    <input type="date" id="birthday" required>
+                    
+                    <button type="submit" id="addBtn">Add Student</button>
+                    <button type="button" id="okBtn">OK</button> <!-- Кнопка OK -->
+                </form>
+            </div>
+            
     </section>
-    <!-- Модальне вікно для додавання нового студента -->
-   <!-- Форма для введення даних студента (показується при натисканні кнопки Add Student) -->
-<div id="addStudentForm" class="hidden">
-    <h3>Add New Student</h3>
-    <form id="studentForm">
-        <label for="group">Group:</label>
-        <input type="text" id="group" required>
-        
-        <label for="name">Name:</label>
-        <input type="text" id="name" required>
-        
-        <label for="gender">Gender:</label>
-        <select id="gender" required>
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-        </select>
-        
-        <label for="birthday">Birthday:</label>
-        <input type="date" id="birthday" required>
-        
-        <button type="submit">Add Student</button>
-        <button type="button" id="cancelBtn">Cancel</button>
-    </form>
-</div>
+   
 
 
-</div>
 
 
 </body>
