@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Students</title>
 
     <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/script.js"></script>
+
     <script src="https://kit.fontawesome.com/e752585ce8.js" crossorigin="anonymous"></script>
 
 </head>
@@ -15,10 +17,9 @@
         <div class="header-icons">
             <i class="fa-regular fa-bell"></i>
             <i class="fa-solid fa-user"></i>
-            <p>James Bond</p>
+            <p>Mariya Tarasyuk</p>
         </div>
     </header>
-    
 
 <section class="main-body"> 
     <aside>
@@ -31,8 +32,7 @@
           </nav>
     </aside>
     
-   
-    
+      
     <div class="content">
         <div class="students-header">
             <h2>Students</h2>
@@ -109,9 +109,36 @@
                     <i class="fa-solid fa-xmark"></i> </td>
                 </tr>
             </table>
-        <!-- </div> -->
-        <!-- <div class="navigate"></div> -->
+       
     </section>
+    <!-- Модальне вікно для додавання нового студента -->
+   <!-- Форма для введення даних студента (показується при натисканні кнопки Add Student) -->
+<div id="addStudentForm" class="hidden">
+    <h3>Add New Student</h3>
+    <form id="studentForm">
+        <label for="group">Group:</label>
+        <input type="text" id="group" required>
+        
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+        
+        <label for="gender">Gender:</label>
+        <select id="gender" required>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+        </select>
+        
+        <label for="birthday">Birthday:</label>
+        <input type="date" id="birthday" required>
+        
+        <button type="submit">Add Student</button>
+        <button type="button" id="cancelBtn">Cancel</button>
+    </form>
 </div>
+
+
+</div>
+
+
 </body>
 </html>

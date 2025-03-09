@@ -116,10 +116,10 @@ tr:nth-child(even) {
   background-color: #D5E4CF;
 }
 
-tr:hover {
+/* tr:hover {
   background-color: #AFC2AE;
   color: white;
-}
+} */
 /* Стилі для чекбокса */
 table input[type="checkbox"] {
   transform: scale(1.2); /* Збільшуємо чекбокс */
@@ -164,4 +164,43 @@ nav ul li a.active {
   color: white;
   padding: 10px;
   border-radius: 5px;
+}
+
+/* Сховуємо форму за замовчуванням */
+.hidden {
+  display: none;
+}
+
+/* Стилі для форми додавання студента */
+#addStudentForm {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  margin: 20px auto;
+}
+
+#addStudentForm form {
+  display: flex;
+  flex-direction: column;
+}
+
+#addStudentForm input, #addStudentForm select {
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+#addStudentForm button {
+  padding: 10px;
+  background-color: #AFC2AE;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#addStudentForm button:hover {
+  background-color: #9BA79C;
 }
