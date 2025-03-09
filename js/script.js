@@ -200,3 +200,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
 });
+// Отримуємо елементи
+const profileContainer = document.querySelector('.profile-container');
+const dropdownMenu = document.querySelector('.dropdown-menu');
+const logoutButton = document.getElementById('logout');
+
+// Функція для показу/приховування меню
+function toggleDropdown() {
+  // Перевірка, чи меню вже відкрите
+  if (dropdownMenu.style.display === 'block') {
+    dropdownMenu.style.display = 'none';  // Якщо відкрите - ховаємо
+  } else {
+    dropdownMenu.style.display = 'block';  // Якщо приховане - показуємо
+  }
+}
+
+// Додаємо обробник події на клік по контейнеру
+profileContainer.addEventListener('click', (event) => {
+  event.stopPropagation();  // Запобігаємо спливу події
+  toggleDropdown();  // Викликаємо функцію для перемикання меню
+});
+
+// Закриваємо меню, якщо користувач натискає поза контейнером
+document.addEventListener('click', (event) => {
+  if (!profileContainer.contains(event.target)) {
+    dropdownMenu.style.display = 'none';  // Ховаємо меню
+  }
+});
+
+// Логіка виходу з аккаунту
+logoutButton.addEventListener('click', () => {
+  alert('Ви вийшли з аккаунту!');
+  // Тут можна додати реальну логіку для виходу з аккаунту, наприклад:
+  // window.location.href = '/logout';  // Направити на сторінку для виходу
+});
+
+// document.addEventListener("DOMContentLoaded", function () {
+//    const prfpctr = document.querySelector("profile-avatar");
+//    const menu = document.querySelector("dropdown-menu");
+
+   
+// });
