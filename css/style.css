@@ -120,3 +120,30 @@ tr:hover {
   background-color: #AFC2AE;
   color: white;
 }
+
+/* Контейнер для заголовка і кнопки */
+.students-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px; /* Додаємо відступ перед таблицею */
+}
+
+/* Кнопка "Add Student" */
+.add-student-btn {
+  background-color: #AFC2AE; /* Колір із палітри */
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-left: auto; /* Відсуваємо кнопку вправо */
+}
+
+/* Ефект при наведенні */
+.add-student-btn:hover {
+  background-color: #9BA79C;
+}
+
