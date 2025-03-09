@@ -1,83 +1,103 @@
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
-body{
-    width: 100%; 
-    margin: 0%;
-    display: grid;
-    overflow: hidden;
+
+body {
+  width: 100%; 
+  margin: 0;
+  display: grid;
+  overflow: hidden;
 }
-header{
-  background-color: lightgray; 
+
+/* Хедер */
+header {
+  background-color: white; 
   width: 100%;
-  height: fit-content;
- display: flex;
- justify-content: space-around;
-}
-/* Container for flexboxes */
-section {
-    display: -webkit-flex;
-    display: flex;
-  }
-  
-  /* Style the navigation menu */
-  nav {
-    -webkit-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-    background: lightgoldenrodyellow;
-    padding: 20px;
-  }
-  
-  /* Style the list inside the menu */
-  nav ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  @media (max-width: 600px) {
-    section {
-      -webkit-flex-direction: column;
-      flex-direction: column;
-    }
-}
-.main-body{
-    display: flex;
-    justify-content: space-around;
+  height: 60px; /* зробив трохи вищим */
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-
-.side-pannel{
-    display: grid;    
-    padding: 20px;
-    float: left;
-    /* margin-right: 150px; */
+/* Логотип ліворуч */
+.CMS {
+  margin-right: auto;
+  font-size: 24px;
+  font-weight: bold;
 }
 
-a{
-    text-decoration: none;
-    color: gray;
-    margin-bottom: 10px;
-    font-size: large;
+/* Контейнер для іконок праворуч */
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-.content{
-    /* background-color: lavender;
-    float: right; */
-    -webkit-flex: 3;
-    -ms-flex: 3;
-    flex: 3;
-    background-color: #f1f1f1;
-    padding: 10px;
+.header-icons i {
+  font-size: 20px;
+  cursor: pointer;
 }
-table, th, td {
-    width: 1336px;
-    border: 1px solid;
-    border-collapse: collapse;
-    text-align: center;
-  }
-  td {
-    text-align: center;
-  }
+
+/* Основний контейнер */
+.main-body {
+  display: flex;
+}
+
+/* Бічна панель */
+aside {
+  width: 250px;
+  padding: 20px;
+}
+
+/* Навігація */
+nav ul {
+  list-style-type: none;
+}
+
+nav ul li {
+  margin-bottom: 15px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: gray;
+  font-size: large;
+  transition: 0.3s;
+}
+
+/* Підсвічування посилань при наведенні */
+nav ul li a:hover {
+  color: lightblue;
+}
+
+/* Контент */
+.content {
+  flex-grow: 1;
+  background-color: #f1f1f1;
+  padding: 20px;
+}
+
+/* Таблиця */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+th {
+  background: #f8f9fa;
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: #f2f2f2;
+}
