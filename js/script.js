@@ -36,6 +36,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const okBtn = document.getElementById("okBtn");
     const addStudentButton = document.getElementById("addBtn");
 
+    const deleteConfirmation = document.getElementById("deleteConfirmation");
+    const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+    const studentNameElement = document.getElementById("studentName");
+
+    let studentToDelete = null; // змінна для збереження студента, якого потрібно видалити
+
     // Показати форму для додавання студента
     addStudentBtn.addEventListener("click", function () {
         addStudentForm.classList.remove("hidden");
@@ -130,6 +137,39 @@ document.addEventListener("DOMContentLoaded", function () {
         // } else {
         //     addStudentForm.classList.remove("hidden");
         // }
+    });
+
+    table.addEventListener("click", function (event) {
+        if (event.target.classList.contains("fa-xmark")) {
+            const row = event.target.closest("tr");
+            const name = row.querySelector("td:nth-child(3)").textContent;
+            studentNameElement.textContent = name;
+
+            // Зберігаємо студент, якого потрібно видалити
+            studentToDelete = row;
+
+            // Показуємо модальне вікно
+            deleteConfirmation.classList.remove("hidden");
+        }
+    });
+
+    // Закрити модальне вікно без видалення
+    cancelDeleteBtn.addEventListener("click", function () {
+        deleteConfirmation.classList.add("hidden");
+    });
+
+    // Підтвердити видалення
+    confirmDeleteBtn.addEventListener("click", function () {
+        if (studentToDelete) {
+            studentToDelete.remove(); // Видаляємо рядок з таблиці
+            studentToDelete = null; // Очищаємо змінну
+        }
+        deleteConfirmation.classList.add("hidden"); // Закриваємо модальне вікно
+    });
+
+    // Закрити модальне вікно без підтвердження
+    closeDeleteBtn.addEventListener("click", function () {
+        deleteConfirmation.classList.add("hidden");
     });
 });
 

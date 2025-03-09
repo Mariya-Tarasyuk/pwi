@@ -38,6 +38,13 @@
             <h2>Students</h2>
             <button class="add-student-btn">Add Student</button>
         </div>
+        <div id="deleteConfirmation" class="hidden">
+            <h3>Are you sure you want to delete the student <span id="studentName"></span>?</h3>
+            <button type="button" id="cancelDeleteBtn">Cancel</button>
+            <button type="button" id="confirmDeleteBtn">OK</button>
+            <i class="fa-solid fa-xmark" id="closeDeleteBtn"></i> <!-- Закрити без видалення -->
+        </div>
+
             <table>
                 <tr>
                     <th><input type="checkbox"></th>
@@ -55,8 +62,8 @@
                     <td>M</td>
                     <td>11.05.2004</td>
                     <td><i class="fa-solid fa-circle"></i></td>
-                    <td><i class="fa-solid fa-pen"></i>
-                    <i class="fa-solid fa-xmark"></i> </td>
+                    <td><i class="fa-solid fa-pen" id="tableicon"></i>
+                    <i class="fa-solid fa-xmark"  id="tableicon"></i> </td>
                 </tr>
                 <tr>
                     <td><input type="checkbox"></td>
