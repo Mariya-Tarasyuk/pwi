@@ -76,78 +76,25 @@
             <i class="fa-solid fa-xmark" id="closeDeleteBtn"></i> <!-- Закрити без видалення -->
         </div>
 
-            <table>
-                <tr>
-                    <th><input type="checkbox"></th>
-                    <th>Gruop</th>
-                    <th>Name</th>
-                    <th>Gender</th>
-                    <th>Birthday</th>
-                    <th>Status</th>
-                    <th>Options</th>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>KN-21</td>
-                    <td>John Smith</td>
-                    <td>M</td>
-                    <td>11.05.2004</td>
-                    <td><i class="fa-solid fa-circle"></i></td>
-                    <td><i class="fa-solid fa-pen" id="tableicon"></i>
-                    <i class="fa-solid fa-xmark"  id="tableicon"></i> </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>KN-21</td>
-                    <td>John Smith</td>
-                    <td>M</td>
-                    <td>11.05.2004</td>
-                    <td><i class="fa-solid fa-circle"></i></td>
-                    <td><i class="fa-solid fa-pen"></i>
-                    <i class="fa-solid fa-xmark"></i> </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>KN-21</td>
-                    <td>John Smith</td>
-                    <td>M</td>
-                    <td>11.05.2004</td>
-                    <td><i class="fa-solid fa-circle"></i></td>
-                    <td><i class="fa-solid fa-pen"></i>
-                    <i class="fa-solid fa-xmark"></i> </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>KN-21</td>
-                    <td>John Smith</td>
-                    <td>M</td>
-                    <td>11.05.2004</td>
-                    <td><i class="fa-solid fa-circle"></i></td>
-                    <td><i class="fa-solid fa-pen"></i>
-                    <i class="fa-solid fa-xmark"></i> </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>KN-21</td>
-                    <td>John Smith</td>
-                    <td>M</td>
-                    <td>11.05.2004</td>
-                    <td><i class="fa-solid fa-circle"></i></td>
-                    <td><i class="fa-solid fa-pen"></i>
-                    <i class="fa-solid fa-xmark"></i> </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>KN-21</td>
-                    <td>John Smith</td>
-                    <td>M</td>
-                    <td>11.05.2004</td>
-                    <td><i class="fa-solid fa-circle"></i></td>
-                    <td><i class="fa-solid fa-pen"></i>
-                    <i class="fa-solid fa-xmark"></i> </td>
-                </tr>
-            </table>
-      
+        <table id="studentsTable">
+            <tr>
+                <th><input type="checkbox"></th>
+                <th>Group</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Birthday</th>
+                <th>Status</th>
+                <th>Options</th>
+            </tr>
+            <!-- Сюди динамічно додаватимуться студенти -->
+        </table>
+        
+        <!-- Пагінація -->
+        <div class="pagination-container">
+            <button class="pagination-button" id="prev-page">Назад</button>
+            <button class="pagination-button" id="next-page">Далі</button>
+        </div>
+        
             
             <div id="addStudentForm" class="hidden">
                 <h3>Add New Student

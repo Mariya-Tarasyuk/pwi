@@ -241,3 +241,77 @@ logoutButton.addEventListener('click', () => {
 
    
 // });
+// Приклад масиву студентів
+const students = [
+    { group: "KN-21", name: "John Smith", gender: "M", birthday: "11.05.2004", status: "Active" },
+    { group: "KN-21", name: "Jane Doe", gender: "F", birthday: "22.04.2003", status: "Inactive" },
+    { group: "KN-22", name: "Mark Spencer", gender: "M", birthday: "19.02.2002", status: "Active" },
+    { group: "KN-21", name: "Emily Johnson", gender: "F", birthday: "15.01.2001", status: "Active" },
+    { group: "KN-23", name: "Alice Brown", gender: "F", birthday: "25.12.2000", status: "Inactive" },
+    { group: "KN-21", name: "Michael White", gender: "M", birthday: "03.03.2005", status: "Active" },
+    { group: "KN-22", name: "Sophia Lee", gender: "F", birthday: "17.07.2003", status: "Active" },
+    { group: "KN-21", name: "David Clark", gender: "M", birthday: "09.09.2002", status: "Inactive" },
+    { group: "KN-23", name: "Lucas Scott", gender: "M", birthday: "14.11.2004", status: "Active" },
+    { group: "KN-22", name: "Charlotte Allen", gender: "F", birthday: "21.08.2001", status: "Inactive" },
+    { group: "KN-21", name: "Oliver Harris", gender: "M", birthday: "13.03.2003", status: "Active" },
+    { group: "KN-21", name: "Mason Carter", gender: "M", birthday: "27.05.2004", status: "Inactive" },
+    { group: "KN-23", name: "Ava Mitchell", gender: "F", birthday: "16.01.2002", status: "Active" },
+    // Додаємо більше студентів за необхідності
+];
+
+let currentPage = 1;
+const studentsPerPage = 10;
+
+// Функція для відображення студентів на поточній сторінці
+function displayStudents() {
+    const startIndex = (currentPage - 1) * studentsPerPage;
+    const endIndex = startIndex + studentsPerPage;
+    const studentsToDisplay = students.slice(startIndex, endIndex);
+
+    const table = document.getElementById("studentsTable");
+    // Очищаємо таблицю перед додаванням нових рядків
+    table.innerHTML = `
+        <tr>
+            <th><input type="checkbox"></th>
+            <th>Group</th>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Birthday</th>
+            <th>Status</th>
+            <th>Options</th>
+        </tr>`;
+
+    // Додаємо нові рядки до таблиці
+    studentsToDisplay.forEach(student => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td><input type="checkbox"></td>
+            <td>${student.group}</td>
+            <td>${student.name}</td>
+            <td>${student.gender}</td>
+            <td>${student.birthday}</td>
+            <td><i class="fa-solid fa-circle"></i></td>
+            <td><i class="fa-solid fa-pen"></i> <i class="fa-solid fa-xmark"></i></td>
+        `;
+        table.appendChild(row);
+    });
+
+    // Оновлюємо номер сторінки
+    document.getElementById("pageNumber").textContent = `Page ${currentPage}`;
+}
+
+// Функція для зміни сторінки
+function changePage(direction) {
+    const totalPages = Math.ceil(students.length / studentsPerPage);
+
+    currentPage += direction;
+
+    // Перевіряємо, щоб сторінка не виходила за межі
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    displayStudents();
+}
+
+// Показуємо студентів на першій сторінці
+displayStudents();

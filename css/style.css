@@ -202,10 +202,12 @@ header {
   padding: 10px;
   color: #333;
   text-decoration: none;
+  border-radius: 5px;
 }
 
 .dropdown-menu a:hover {
-  background: #f4f4f4;
+  background: #9BA79C;
+  color: white;
 }
 
 /* Основний контейнер */
@@ -281,6 +283,45 @@ tr:nth-child(even) {
   background-color: #AFC2AE;
   color: white;
 } */
+
+/* Контейнер для кнопок пагінації */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Основний стиль для кнопок пагінації */
+.pagination-button {
+  background-color: #AFC2AE; /* Зелений фон */
+  color: white; /* Білий текст */
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* Стан при наведенні */
+.pagination-button:hover {
+  background-color: #9BA79C; /* Трохи темніший зелений при наведенні */
+  transform: scale(1.05); /* Легке збільшення при наведенні */
+}
+
+/* Стан при натисканні */
+.pagination-button:active {
+  background-color: #9b9b9b; /* Ще темніший зелений при натисканні */
+}
+
+/* Стан заблокованої кнопки */
+.pagination-button:disabled {
+  background-color: #dcdcdc; /* Світло-сірий фон */
+  cursor: not-allowed; /* Зміна курсору на заборонений */
+}
+
+
 /* Стилі для чекбокса */
 table input[type="checkbox"] {
   transform: scale(1.2); /* Збільшуємо чекбокс */
@@ -403,17 +444,61 @@ nav ul li a.active {
 }
 
 /* Стилі для форми додавання студента */
+/* Базові стилі для модального вікна */
 #addStudentForm {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: white;
   padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  margin: 20px auto;
-  position: fixed;
-  transform: translate(-50%, -50%); /* Центруємо вікно */
-  z-index: 1000; /* Щоб вікно було поверх інших елементів */
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  width: 400px; /* Базова ширина */
+  max-width: 90%;
+  max-height: 80vh;
+  overflow-y: auto; /* Додає прокрутку, якщо контент великий */
 }
+
+/* Для екранів до 480px (мобільні телефони) */
+@media (max-width: 480px) {
+  #addStudentForm {
+    width: 90%; /* Менша ширина для мобільних */
+    top: 10vh; /* Щоб не виходило за межі */
+    transform: translateX(-50%); /* Тільки по горизонталі */
+    padding: 15px;
+  }
+}
+
+/* Для екранів від 481px до 768px (планшети) */
+@media (min-width: 481px) and (max-width: 768px) {
+  #addStudentForm {
+    width: 75%;
+  }
+}
+
+/* Для екранів від 769px до 1024px (стандартні екрани) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  #addStudentForm {
+    width: 60%;
+  }
+}
+
+/* Для екранів від 1025px до 1440px (ноутбуки) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  #addStudentForm {
+    width: 50%;
+  }
+}
+
+/* Для екранів від 1441px (десктопи) */
+@media (min-width: 1441px) {
+  #addStudentForm {
+    width: 40%;
+  }
+}
+
 
 #addStudentForm form {
   display: flex;
@@ -437,4 +522,225 @@ nav ul li a.active {
 
 #addStudentForm button:hover {
   background-color: #9BA79C;
+}
+
+/* Для екранів до 480px (мобільні телефони) */
+@media (max-width: 480px) {
+  header {
+    height: 60px; /* Зменшуємо висоту хедера для мобільних */
+    padding: 0 15px;
+  }
+
+  .CMS {
+    font-size: 20px; /* Зменшуємо розмір шрифта для заголовка */
+  }
+
+  .header-icons i {
+    font-size: 18px; /* Зменшуємо розмір іконок */
+  }
+
+  .main-body {
+    flex-direction: column; /* Встановлюємо вертикальне розташування */
+  }
+
+  aside {
+    width: 100%; /* Бічна панель займає всю ширину */
+    padding: 10px;
+  }
+
+  .content {
+    padding: 15px; /* Зменшуємо відступи в контенті */
+  }
+
+  .pagination-container {
+    flex-direction: column; /* Кнопки пагінації вертикально */
+  }
+
+  .pagination-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .profile-avatar {
+    width: 40px;
+    height: 40px; /* Зменшуємо аватарки */
+  }
+
+  .notification-dropdown {
+    width: 100%; /* Для мобільних розтягнути випадаюче меню */
+  }
+
+  
+}
+
+/* Для екранів від 481px до 768px (планшети) */
+@media (min-width: 481px) and (max-width: 768px) {
+  header {
+    height: 65px;
+  }
+
+  .CMS {
+    font-size: 22px;
+  }
+
+  .header-icons i {
+    font-size: 19px;
+  }
+
+  .main-body {
+    flex-direction: row;
+  }
+
+  aside {
+    width: 220px; /* Трошки зменшуємо ширину бічної панелі */
+  }
+
+  .pagination-container {
+    justify-content: center;
+  }
+
+  .pagination-button {
+    padding: 9px 18px;
+    font-size: 15px;
+  }
+
+  .content {
+    padding: 18px;
+  }
+
+  .profile-avatar {
+    width: 45px;
+    height: 45px;
+  }
+
+  /* #addStudentForm {
+    width: 75%;
+  } */
+}
+
+/* Для екранів від 769px до 1024px (стандартні екрани) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  header {
+    height: 70px;
+  }
+
+  .CMS {
+    font-size: 24px;
+  }
+
+  .header-icons i {
+    font-size: 20px;
+  }
+
+  .main-body {
+    flex-direction: row;
+  }
+
+  aside {
+    width: 250px;
+  }
+
+  .pagination-container {
+    justify-content: flex-end;
+  }
+
+  .pagination-button {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .profile-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  /* #addStudentForm {
+    width: 70%;
+  } */
+}
+
+/* Для екранів від 1025px до 1440px (ноутбуки) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  header {
+    height: 75px;
+  }
+
+  .CMS {
+    font-size: 26px;
+  }
+
+  .header-icons i {
+    font-size: 22px;
+  }
+
+  .pagination-container {
+    justify-content: center;
+  }
+
+  .pagination-button {
+    padding: 12px 24px;
+    font-size: 18px;
+  }
+
+  .content {
+    padding: 25px;
+  }
+
+  .profile-avatar {
+    width: 55px;
+    height: 55px;
+  }
+
+  /* #addStudentForm {
+    width: 60%;
+  } */
+}
+
+/* Для екранів від 1441px (десктопи) */
+@media (min-width: 1441px) {
+  header {
+    height: 80px;
+  }
+
+  .CMS {
+    font-size: 28px;
+  }
+
+  .header-icons i {
+    font-size: 24px;
+  }
+
+  .main-body {
+    flex-direction: row;
+  }
+
+  aside {
+    width: 300px;
+  }
+
+  .pagination-container {
+    justify-content: center;
+  }
+
+  .pagination-button {
+    padding: 14px 28px;
+    font-size: 20px;
+  }
+
+  .content {
+    padding: 30px;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  /* #addStudentForm {
+    width: 50%;
+  } */
 }
