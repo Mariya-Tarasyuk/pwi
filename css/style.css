@@ -48,10 +48,98 @@ header {
   color: #9BA79C;
 }
 
+
+.hidden{
+  display: none;
+}
+/* Контейнер дзвіночка */
+.notification-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* Стиль для індикатора нових повідомлень */
+.notification-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  display: none; /* Ховаємо, поки немає нових повідомлень */
+}
+
+/* Показати, коли потрібно */
+.notification-indicator.show {
+  display: block;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 250px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+
+  /* Початково приховано */
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.notification-dropdown.show {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-item img {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0; /* Щоб не зменшувалось випадково */
+}
+
+
+
+/* Анімація тремтіння дзвіночка */
+@keyframes bell-shake {
+  0% { transform: rotate(0); }
+  20% { transform: rotate(-15deg); }
+  40% { transform: rotate(15deg); }
+  60% { transform: rotate(-10deg); }
+  80% { transform: rotate(10deg); }
+  100% { transform: rotate(0); }
+}
+
+.bell-animation {
+  animation: bell-shake 0.5s ease-in-out;
+}
 /* Основний контейнер */
 .main-body {
   display: flex;
 }
+
 
 /* Бічна панель */
 aside {

@@ -6,8 +6,7 @@
     <title>Students</title>
 
     <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/script.js"></script>
-
+    <script  src="/js/script.js" defer ></script>
     <script src="https://kit.fontawesome.com/e752585ce8.js" crossorigin="anonymous"></script>
 
 </head>
@@ -15,7 +14,31 @@
     <header class="header">
         <h2 class="CMS">CMS</h2>
         <div class="header-icons">
-            <i class="fa-regular fa-bell"></i>
+
+            <div class="notification-container">
+                <i class="fa-solid fa-bell notification-bell"></i>
+                <span class="notification-indicator hidden"></span>
+            
+                <div class="notification-dropdown hidden">
+                    <h4>Останні повідомлення</h4>
+                    <ul>
+                        <li>
+                            <img src="/images/avatar-1.jpg" alt="Avatar" style="width: 50px; height: 50px;">
+                            <span><strong>Олександр:</strong> Нове повідомлення</span>
+                        </li>
+                        <li>
+                            <img src="/images/avatar-2.jpg" alt="Avatar" style="width: 50px; height: 50px;">
+                            <span><strong>Марина:</strong> Додано студента</span>
+                        </li>
+                        <li>
+                            <img src="/images/avatar-3.jpg" alt="Avatar"style="width: 50px; height: 50px;">
+                            <span><strong>Іван:</strong> Оновлена інформація</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            
             <i class="fa-solid fa-user"></i>
             <p>Mariya Tarasyuk</p>
         </div>

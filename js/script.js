@@ -173,3 +173,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const bellIcon = document.querySelector(".notification-bell");
+    const dropdown = document.querySelector(".notification-dropdown");
+    const indicator = document.querySelector(".notification-indicator");
+    
+    bellIcon.addEventListener("dblclick", function () {
+        indicator.classList.toggle("show");
+        dropdown.classList.toggle("show");
+        bellIcon.classList.add("bell-animation");
+        setTimeout(() => bellIcon.classList.remove("bell-animation"), 500);
+    });
+   
+    if (bellIcon && dropdown) {
+        bellIcon.addEventListener("click", function () {
+            indicator.classList.remove("show");
+            dropdown.classList.toggle("show");
+        });
+
+        // Закриває меню при кліку поза ним
+        document.addEventListener("click", function (event) {
+            if (!bellIcon.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove("show");
+            }
+        });
+    }
+    
+});
