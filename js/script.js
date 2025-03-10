@@ -55,11 +55,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Сховати форму при натисканні на хрестик
-    closeBtn.addEventListener("click", function () {
-        addStudentForm.classList.add("hidden");
-        
-    });
 
+    document.querySelectorAll(".closeIcon").forEach(icon => {
+        icon.addEventListener("click", function () {
+            this.closest("div").classList.add("hidden");
+        });
+    });
+    
+    
     // Перетворення дати в формат дд-мм-рррр
     function formatDate(date) {
         const d = new Date(date);
