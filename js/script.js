@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
     const studentNameElement = document.getElementById("studentName");
 
+    const editStudentBtn = document.querySelector(".fa-pen");
+    const editStudentForm = document.getElementById("editStudentForm");
     let studentToDelete = null; // змінна для збереження студента, якого потрібно видалити
 
     // Показати форму для додавання студента
@@ -48,9 +50,14 @@ document.addEventListener("DOMContentLoaded", function () {
         addStudentForm.classList.remove("hidden");
     });
 
+    editStudentBtn.addEventListener("click", function () {
+        editStudentForm.classList.remove("hidden");
+    });
+
     // Сховати форму при натисканні на хрестик
     closeBtn.addEventListener("click", function () {
         addStudentForm.classList.add("hidden");
+        
     });
 
     // Перетворення дати в формат дд-мм-рррр
@@ -131,12 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please fill all fields before adding a student.");
             addStudentForm.classList.remove("hidden");
         }
-        // Перевірка, чи всі поля заповнені
-        // if (!group || !name || !gender || !birthday) {
-        //     alert("Please fill all fields before adding a student.");
-        // } else {
-        //     addStudentForm.classList.remove("hidden");
-        // }
+        
     });
 
     table.addEventListener("click", function (event) {

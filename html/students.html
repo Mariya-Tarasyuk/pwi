@@ -12,7 +12,7 @@
 </head>
 <body>
     <header class="header">
-        <h2 class="CMS">CMS</h2>
+        <h2 class="CMS"><a href="students.html">CMS</a></h2>
         <div class="header-icons">
 
             <div class="notification-container">
@@ -56,9 +56,9 @@
     <aside>
         <nav>
             <ul>
-              <li><a href="#">Dashboard</a></li>
-              <li><a href="#" class="active">Students</a></li>
-              <li><a href="#">Tasks</a></li>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="students.html" class="active">Students</a></li>
+              <li><a href="tasks.html">Tasks</a></li>
             </ul>
           </nav>
     </aside>
@@ -91,8 +91,8 @@
         
         <!-- Пагінація -->
         <div class="pagination-container">
-            <button class="pagination-button" id="prev-page">Назад</button>
-            <button class="pagination-button" id="next-page">Далі</button>
+            <button class="pagination-button" id="prev-page">Previos</button>
+            <button class="pagination-button" id="next-page">Next</button>
         </div>
         
             
@@ -121,6 +121,30 @@
                 </form>
             </div>
             
+            <div id="editStudentForm" class="hidden">
+                <h3>Edit Student
+                    <i id="closeBtn" class="fa-solid fa-xmark" style="cursor: pointer; float: right;"></i> <!-- Іконка хрестика -->
+                </h3>
+                <form id="studentForm">
+                    <label for="group">Group:</label>
+                    <input type="text" id="group" required>
+                    
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" required>
+                    
+                    <label for="gender">Gender:</label>
+                    <select id="gender" required>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                    
+                    <label for="birthday">Birthday:</label>
+                    <input type="date" id="birthday" required>
+                    
+                    <button type="submit" id="addBtn">Add Student</button>
+                    <button type="button" id="okBtn">OK</button> <!-- Кнопка OK -->
+                </form>
+            </div>
     </section>
    
 
