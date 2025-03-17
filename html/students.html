@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students</title>
-
     <link rel="stylesheet" href="/css/style.css">
     <script  src="/js/script.js" defer ></script>
     <script src="https://kit.fontawesome.com/e752585ce8.js" crossorigin="anonymous"></script>
@@ -12,13 +11,15 @@
 </head>
 <body>
     <header class="header">
-        <h2 class="CMS"><a href="students.html">CMS</a></h2>
-        <div class="header-icons">
 
+        <h2 class="CMS"><a href="students.html">CMS</a></h2>
+        
+        <div class="header-icons">
+         <!-- Контейнер для вікна сповіщень -->
             <div class="notification-container">
                 <i class="fa-solid fa-bell notification-bell"></i>
                 <span class="notification-indicator hidden"></span>
-                
+                 <!-- Випадаюче вікно -->
                 <div class="notification-dropdown">
                     <div class="notification-item">
                       <img src="/images/avatar-3.jpg" alt="User Avatar">
@@ -26,7 +27,8 @@
                         <div class="name">Ім'я Користувача</div>
                         <div class="message">Це ваше нове повідомлення!</div>
                       </div>
-                    </div>     
+                    </div>   
+
                     <div class="notification-item">
                       <img src="/images/avatar-2.jpg" alt="User Avatar">
                       <div class="notification-content">
@@ -34,25 +36,26 @@
                         <div class="message">Ваш запит підтверджено.</div>
                       </div>
                     </div>
+
                   </div>
             </div>
-                  
+                   <!-- Контейнер для вікна профілю -->
             <div class="profile-container">
                 <div class="profile-info">
                   <img src="/images/avatar-1.jpg" alt="Avatar" class="profile-avatar">
                   <p >Mariya Tarasyuk</p>
                 </div>
+                 <!-- Випадаюче вікно -->
                 <div class="dropdown-menu">
                   <a href="#">Profile</a>
                   <a href="#" id="logout">Log out</a>
                 </div>
-              </div>
-              
-              
+              </div>       
         </div>
     </header>
 
 <section class="main-body"> 
+     <!-- Бічна панель -->
     <aside>
         <nav>
             <ul>
@@ -63,31 +66,32 @@
           </nav>
     </aside>
     
-      
+       <!-- Основний вміст -->
     <div class="content">
         <div class="students-header">
             <h2>Students</h2>
             <button class="add-student-btn">Add Student</button>
         </div>
-        <div id="deleteConfirmation" class="hidden">
-            <h3>Are you sure you want to delete the student <span id="studentName"></span>?</h3>
-            <button type="button" id="cancelDeleteBtn">Cancel</button>
-            <button type="button" id="confirmDeleteBtn">OK</button>
-            <i class="fa-solid fa-xmark" id="closeDeleteBtn"></i> <!-- Закрити без видалення -->
-        </div>
 
+        
+        <!-- Таблиця студентів -->
         <table id="studentsTable">
-            <tr>
-                <th><input type="checkbox"></th>
-                <th>Group</th>
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Birthday</th>
-                <th>Status</th>
-                <th>Options</th>
-            </tr>
-            <!-- Сюди динамічно додаватимуться студенти -->
+            <thead>
+                <tr>
+                    <th><input type="checkbox"></th>
+                    <th>Group</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Birthday</th>
+                    <th>Status</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Сюди динамічно додаватимуться студенти -->
+            </tbody>
         </table>
+        
         
         <!-- Пагінація -->
         <div class="pagination-container">
@@ -95,61 +99,64 @@
             <button class="pagination-button" id="next-page">Next</button>
         </div>
         
-            
-            <div id="addStudentForm" class="hidden">
-                <h3>Add New Student
-                    <i id="closeBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i> <!-- Іконка хрестика -->
-                </h3>
-                <form id="studentForm">
-                    <label for="group">Group:</label>
-                    <input type="text" id="group" required>
-                    
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" required>
-                    
-                    <label for="gender">Gender:</label>
-                    <select id="gender" required>
-                        <option value="M">Male</option>
-                        <option value="F">Female</option>
-                    </select>
-                    
-                    <label for="birthday">Birthday:</label>
-                    <input type="date" id="birthday" required>
-                    
-                    <button type="submit" id="addBtn">Add Student</button>
-                    <button type="button" id="okBtn">OK</button> <!-- Кнопка OK -->
-                </form>
-            </div>
-            
-            <div id="editStudentForm" class="hidden">
-                <h3>Edit Student
-                    <i id="closeBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i> <!-- Іконка хрестика -->
-                </h3>
-                <form id="studentForm">
-                    <label for="group">Group:</label>
-                    <input type="text" id="group" required>
-                    
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" required>
-                    
-                    <label for="gender">Gender:</label>
-                    <select id="gender" required>
-                        <option value="M">Male</option>
-                        <option value="F">Female</option>
-                    </select>
-                    
-                    <label for="birthday">Birthday:</label>
-                    <input type="date" id="birthday" required>
-                    
-                    <button type="submit" id="addBtn">Add Student</button>
-                    <button type="button" id="okBtn">OK</button> <!-- Кнопка OK -->
-                </form>
-            </div>
+        <!-- Вікно додавання студента -->
+        <div id="addStudentForm" class="hidden">
+            <h3>Add New Student
+                <i id="closeBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i> <!-- Іконка хрестика -->
+            </h3>
+            <form id="studentForm">
+                <label for="group">Group:</label>
+                <input type="text" id="group" required>
+                
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+                
+                <label for="gender">Gender:</label>
+                <select id="gender" required>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+                
+                <label for="birthday">Birthday:</label>
+                <input type="date" id="birthday" required>
+                
+                <button type="submit" id="addBtn">Add Student</button>
+                <button type="button" id="okBtn">OK</button> <!-- Кнопка OK -->
+            </form>
+        </div>
+        <!-- Вікно редагування студента -->
+        <div id="editStudentForm" class="hidden">
+            <h3>Edit Student
+                <i id="closeBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i> <!-- Іконка хрестика -->
+            </h3>
+            <form id="studentForm">
+                <label for="group">Group:</label>
+                <input type="text" id="group" required>
+                
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+                
+                <label for="gender">Gender:</label>
+                <select id="gender" required>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+                
+                <label for="birthday">Birthday:</label>
+                <input type="date" id="birthday" required>
+                
+                <button type="submit" id="addBtn">Add Student</button>
+                <button type="button" id="okBtn">OK</button> <!-- Кнопка OK -->
+            </form>
+        </div>
+
+        <!-- Вікно підтвердження видалення -->
+           <div id="deleteConfirmation" class="hidden">
+               <h3>Are you sure you want to delete the student <span id="studentName"></span>?</h3>
+               <button type="button" id="cancelDeleteBtn">Cancel</button>
+               <button type="button" id="confirmDeleteBtn">OK</button>
+               <i class="fa-solid fa-xmark closeIcon" id="closeDeleteBtn"></i> <!-- Закрити без видалення -->
+           </div>
     </section>
-   
-
-
-
-
 </body>
 </html>

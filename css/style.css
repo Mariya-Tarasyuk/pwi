@@ -5,17 +5,15 @@
 }
 
 body {
-  width: 100%; 
-  margin: 0;
-  display: grid;
-  overflow-y: hidden;
+  width: 100%;
+  min-height: 100vh;
   background-color: #FCF7EC;
+  font-family: sans-serif;
 }
 
 /* Хедер */
 header {
   background-color: #FCF7EC;
-  width: 100%;
   height: 70px;
   display: flex;
   align-items: center;
@@ -23,26 +21,23 @@ header {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.CMS {
-  margin-right: auto;
-  
-}
-.CMS a{
+.CMS a {
   font-weight: bold;
   color: #9BA79C;
   text-decoration: none;
 }
-/* Контейнер для іконок праворуч */
+
 .header-icons {
   display: flex;
   align-items: center;
   gap: 15px;
+  margin-left: auto;
 }
 
 .header-icons i {
   font-size: 20px;
-  cursor: pointer;
   color: #9BA79C;
+  cursor: pointer;
 }
 
 .header-icons p {
@@ -50,18 +45,16 @@ header {
   color: #9BA79C;
 }
 
-
-.hidden{
+/* Сховані елементи */
+.hidden {
   display: none;
 }
-/* Контейнер дзвіночка */
+
+/* Дзвіночок */
 .notification-container {
   position: relative;
-  display: inline-block;
-  cursor: pointer;
 }
 
-/* Стиль для індикатора нових повідомлень */
 .notification-indicator {
   position: absolute;
   top: 0;
@@ -70,31 +63,30 @@ header {
   height: 10px;
   background-color: red;
   border-radius: 50%;
-  display: none; /* Ховаємо, поки немає нових повідомлень */
+  display: none;
 }
 
-/* Показати, коли потрібно */
 .notification-indicator.show {
   display: block;
 }
 
+
 .notification-dropdown {
   position: absolute;
-  top: 40px;
-  right: 0;
+  top: 40px; /* Відстань від дзвіночка */
+  right: 0; /* Спочатку прив'язуємо до правого краю контейнера */
   background: white;
   border: 1px solid #ddd;
   border-radius: 5px;
-  width:300px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  max-width: calc(100vw - 40px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 10px;
-
-  /* Початково приховано */
-  display: none;
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
   transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
 }
 
 .notification-dropdown.show {
@@ -103,36 +95,27 @@ header {
   visibility: visible;
   transform: translateY(0);
 }
-
-.notification-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .notification-item {
   display: flex;
-  /* flex-direction: column; */
   align-items: center;
   padding: 10px;
   border-bottom: 1px solid #ddd;
 }
-.notification-item:last-child{
+
+.notification-item:last-child {
   border-bottom: none;
 }
+
 .notification-item img {
   width: 50px;
   height: 50px;
-  /* flex-shrink: 0; Щоб не зменшувалось випадково */
   border-radius: 50%;
   margin-right: 10px;
   object-fit: cover;
 }
 
 .notification-content {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1; /* Щоб повідомлення займало всю доступну ширину */
+  flex-grow: 1;
 }
 
 .notification-item .name {
@@ -144,33 +127,28 @@ header {
   background: #f4f4f4;
   padding: 8px 12px;
   border-radius: 5px;
-  text-align: left;
-  width: 100%;
-}
-
-/* Анімація тремтіння дзвіночка */
-@keyframes bell-shake {
-  0% { transform: rotate(0); }
-  20% { transform: rotate(-15deg); }
-  40% { transform: rotate(15deg); }
-  60% { transform: rotate(-10deg); }
-  80% { transform: rotate(10deg); }
-  100% { transform: rotate(0); }
 }
 
 .bell-animation {
-  animation: bell-shake 0.5s ease-in-out;
+  animation: bellRing 0.5s ease-in-out;
 }
 
+@keyframes bellRing {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(-15deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Профіль */
 .profile-container {
   position: relative;
-  display: inline-block;  /* Залишаємо inline-block для контейнера */
-  cursor: pointer;
 }
 
 .profile-info {
   display: flex;
-  align-items: center;  /* Вирівнювання по вертикалі */
+  align-items: center;
 }
 
 .profile-avatar {
@@ -178,13 +156,7 @@ header {
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 10px; /* Відстань між аватаром і ім'ям */
-}
-
-.profile-name {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
+  margin-right: 10px;
 }
 
 .dropdown-menu {
@@ -193,10 +165,10 @@ header {
   right: 0;
   background: white;
   border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   width: 150px;
   padding: 10px 0;
-  display: none;  /* Початково меню приховане */
+  display: none;
 }
 
 .dropdown-menu a {
@@ -212,49 +184,46 @@ header {
   color: white;
 }
 
-/* Основний контейнер */
+/* Основний вміст */
 .main-body {
   display: flex;
 }
 
-
-/* Бічна панель */
 aside {
-  width: 250px;
+  width: 300px; /* Збільшено ширину для десктопів */
   padding: 20px;
 }
 
-/* Навігація */
 nav ul {
-  list-style-type: none;
+  list-style: none;
 }
 
 nav ul li {
   margin-bottom: 10px;
 }
 
-/* Стиль посилань */
 nav ul li a {
   display: block;
-  text-decoration: none;
+  padding: 10px 15px;
   color: #9BA79C;
   font-size: large;
-  padding: 10px 15px;
+  text-decoration: none;
   border-radius: 5px;
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* Ефект при наведенні */
 nav ul li a:hover {
   background-color: #D5E4CF;
   color: #000;
 }
 
+nav ul li a.active {
+  background-color: #AFC2AE;
+  color: white;
+}
 
-/* Контент */
 .content {
   flex-grow: 1;
-  /* background-color: #FCF7EC; */
   padding: 20px;
 }
 
@@ -269,6 +238,7 @@ th, td {
   border: 1px solid #ccc;
   padding: 10px;
   text-align: center;
+  vertical-align: middle;
 }
 
 th {
@@ -281,8 +251,59 @@ tr:nth-child(even) {
   background-color: #D5E4CF;
 }
 
+table input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+}
 
-/* Контейнер для кнопок пагінації */
+td i {
+  margin: 0 3px; /* Зменшено відстань між іконками */
+  cursor: pointer;
+}
+
+td:nth-child(3)::before { /* Ініціали для імені */
+  content: attr(data-initials);
+  display: none;
+}
+
+.fa-pen:hover {
+  transform: scale(1.3);
+  color: #9BA79C;
+}
+
+.fa-xmark:hover {
+  transform: scale(1.3);
+  color: #ff4d4d;
+}
+
+/* Кнопки */
+.students-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.add-student-btn, .pagination-button {
+  background-color: #AFC2AE;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.add-student-btn:hover, .pagination-button:hover {
+  background-color: #9BA79C;
+  transform: scale(1.05);
+}
+
+.pagination-button:disabled {
+  background-color: #dcdcdc;
+  cursor: not-allowed;
+}
+
 .pagination-container {
   display: flex;
   justify-content: center;
@@ -290,111 +311,21 @@ tr:nth-child(even) {
   margin-top: 20px;
 }
 
-
-/* Стан при наведенні */
-.pagination-button:hover {
-  background-color: #9BA79C; /* Трохи темніший зелений при наведенні */
-  transform: scale(1.05); /* Легке збільшення при наведенні */
-}
-
-/* Стан при натисканні */
-.pagination-button:active {
-  background-color: #9b9b9b; /* Ще темніший зелений при натисканні */
-}
-
-/* Стан заблокованої кнопки */
-.pagination-button:disabled {
-  background-color: #dcdcdc; /* Світло-сірий фон */
-  cursor: not-allowed; /* Зміна курсору на заборонений */
-}
-
-
-/* Стилі для чекбокса */
-table input[type="checkbox"] {
-  transform: scale(1.2); /* Збільшуємо чекбокс */
-  cursor: pointer;
-}
-/* Відступ між іконками */
-td i {
-  margin: 0 8px; /* Додаємо відступи зліва і справа */
-  cursor: pointer;
-}
-
-
-/* Контейнер для заголовка і кнопки */
-.students-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 15px; /* Додаємо відступ перед таблицею */
-}
-
-/* Кнопка "Add Student" */
-.add-student-btn, .pagination-button{
-  background-color: #AFC2AE; /* Колір із палітри */
-  color: white;
-  font-size: 16px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
- 
-}
-
-/* Ефект при наведенні */
-.add-student-btn:hover {
-  background-color: #9BA79C;
-}
-
-/* Виділення активного пункту меню */
-nav ul li a.active {
-  background-color: #AFC2AE; /* Колір із палітри */
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-}
-/* Стилі для анімації іконок */
-#addStudentForm i:hover, #addStudentForm i:focus {
-  transform: scale(1.2); /* Збільшення іконки при наведенні */
-  transition: transform 0.2s ease-in-out;
-  cursor: pointer;
-}
-
-/* Загальні стилі для іконок */
-.fa-pen, .fa-xmark {
-  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
-  cursor: pointer;
-}
-
-/* Ефект при наведенні на іконку редагування (олівець) */
-.fa-pen:hover {
-  transform: scale(1.3);
-  color: #9BA79C; /* Синій колір при наведенні */
-}
-
-/* Ефект при наведенні на іконку видалення (хрестик) */
-.fa-xmark:hover {
-  transform: scale(1.3);
-  color: #ff4d4d; /* Червоний колір при наведенні */
-}
-
-/* Стилі для модального вікна видалення */
-#deleteConfirmation {
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 300px;
+/* Модальні вікна */
+#deleteConfirmation, #addStudentForm, #editStudentForm {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  width: 90%;
+  max-width: 400px;
 }
 
-
-/* Кнопки для модального вікна */
 #deleteConfirmation button {
   padding: 10px;
   background-color: #ff4d4d;
@@ -408,73 +339,12 @@ nav ul li a.active {
   background-color: #ff1a1a;
 }
 
-#deleteConfirmation i {
+#deleteConfirmation i, #addStudentForm i.closeIcon, #editStudentForm i.closeIcon {
   position: absolute;
   top: 10px;
   right: 10px;
   cursor: pointer;
 }
-
-/* Сховуємо форму за замовчуванням */
-.hidden {
-  display: none;
-}
-
-/* Стилі для форми додавання студента */
-#addStudentForm, #editStudentForm {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  width: 400px; /* Базова ширина */
-  max-width: 90%;
-  max-height: 80vh;
-  overflow-y: auto; /* Додає прокрутку, якщо контент великий */
-}
-
-/* Для екранів до 480px (мобільні телефони) */
-@media (max-width: 480px) {
-  #addStudentForm, #editStudentForm{
-    width: 90%; /* Менша ширина для мобільних */
-    top: 10vh; /* Щоб не виходило за межі */
-    transform: translateX(-50%); /* Тільки по горизонталі */
-    padding: 15px;
-  }
-}
-
-/* Для екранів від 481px до 768px (планшети) */
-@media (min-width: 481px) and (max-width: 768px) {
-  #addStudentForm,#editStudentForm {
-    width: 75%;
-  }
-}
-
-/* Для екранів від 769px до 1024px (стандартні екрани) */
-@media (min-width: 769px) and (max-width: 1024px) {
-  #addStudentForm, #editStudentForm {
-    width: 60%;
-  }
-}
-
-/* Для екранів від 1025px до 1440px (ноутбуки) */
-@media (min-width: 1025px) and (max-width: 1440px) {
-  #addStudentForm, #editStudentForm {
-    width: 50%;
-  }
-}
-
-/* Для екранів від 1441px (десктопи) */
-@media (min-width: 1441px) {
-  #addStudentForm, #editStudentForm {
-    width: 40%;
-  }
-}
-
 
 #addStudentForm form, #editStudentForm form {
   display: flex;
@@ -500,223 +370,108 @@ nav ul li a.active {
   background-color: #9BA79C;
 }
 
-/* Для екранів до 480px (мобільні телефони) */
+/* Адаптивність */
+
+/* Мобільні (до 480px) */
 @media (max-width: 480px) {
-  header {
-    height: 60px; /* Зменшуємо висоту хедера для мобільних */
-    padding: 0 15px;
+  header { height: 60px; padding: 0 10px; }
+  .CMS a { font-size: 18px; }
+  .header-icons { gap: 10px; }
+  .header-icons i { font-size: 16px; }
+  .header-icons p { font-size: 14px; }
+  .main-body { flex-direction: column; }
+  aside { width: 100%; padding: 10px; }
+  nav ul { display: flex;
+         flex-wrap: wrap;
+            flex-direction: column; }
+  nav ul li { margin-bottom: 0; }
+  nav ul li a { padding: 6px 8px; font-size: 14px; }
+  .content { padding: 10px; }
+  .students-header { flex-direction: column; gap: 10px; }
+  .students-header h2 { font-size: 20px; }
+  .add-student-btn { width: 100%; padding: 8px; font-size: 14px; }
+  table, thead, tbody, th, td, tr { display: block; }
+  thead tr { display: none; }
+  tr { margin-bottom: 10px; border: 1px solid #ccc; }
+  td { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 5px; 
+    text-align: left; 
+    font-size: 12px; 
   }
-
-  .CMS {
-    font-size: 20px; /* Зменшуємо розмір шрифта для заголовка */
+  td:before { 
+    content: attr(data-label); 
+    font-weight: bold; 
+    margin-right: 10px; 
+    font-size: 12px; 
   }
-
-  .header-icons i {
-    font-size: 18px; /* Зменшуємо розмір іконок */
+  td:nth-child(1):before { content: "✔"; }
+  td:nth-child(2):before { content: "Group"; }
+  td:nth-child(3):before { content: "Name"; }
+  td:nth-child(4):before { content: "Gender"; }
+  td:nth-child(5):before { content: "Birthday"; }
+  td:nth-child(6):before { content: "Status"; }
+  td:nth-child(7):before { content: "Options"; }
+  td:nth-child(3) { font-size: 12px; }
+  td:nth-child(3)::before { display: inline; }
+  td i { font-size: 14px; }
+  .profile-avatar { width: 35px; height: 35px; }
+  .notification-dropdown { 
+    top: 40px; /* Зменшено відстань для компактності */
+    right: auto; /* Видаляємо зміщення */
+    left: 50%; /* Центруємо відносно контейнера */
+    transform: translateX(-50%) translateY(-10px); /* Центрування по горизонталі */
+    width: calc(100vw - 20px); 
+    max-width: 300px; 
+    padding: 5px; 
   }
-
-  .main-body {
-    flex-direction: column; /* Встановлюємо вертикальне розташування */
+  .notification-dropdown.show {
+    transform: translateX(-50%) translateY(0); /* Корекція при показі */
   }
-
-  aside {
-    width: 100%; /* Бічна панель займає всю ширину */
-    padding: 10px;
-  }
-
-  .content {
-    padding: 15px; /* Зменшуємо відступи в контенті */
-  }
-
-  .pagination-container {
-    flex-direction: column; /* Кнопки пагінації вертикально */
-  }
-
-  .pagination-button {
-    padding: 8px 16px;
-    font-size: 14px;
-  }
-
-  .profile-avatar {
-    width: 40px;
-    height: 40px; /* Зменшуємо аватарки */
-  }
-
-  .notification-dropdown {
-    width: 100%; /* Для мобільних розтягнути випадаюче меню */
-  }
-
-  
+  .notification-item { padding: 5px; }
+  .notification-item img { display: none; } /* Приховуємо аватарки */
+  .notification-content .name { font-size: 12px; }
+  .notification-content .message { font-size: 11px; padding: 5px 8px; }
+  .pagination-container { flex-direction: column; gap: 5px; }
+  .pagination-button { width: 100%; padding: 8px; font-size: 14px; }
 }
 
-/* Для екранів від 481px до 768px (планшети) */
+/* Планшети та середні екрани (481px - 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
-  header {
-    height: 65px;
+  .main-body { flex-direction: column; }
+  aside { width: 100%; padding: 10px; }
+  nav ul { display: flex; justify-content: center; gap: 10px; }
+  nav ul li { margin-bottom: 0; }
+  nav ul li a { padding: 8px 12px; font-size: medium; }
+  .content { padding: 15px; }
+  table { width: 100%; }
+  .profile-avatar { width: 45px; height: 45px; }
+  .notification-dropdown { 
+    width: calc(100vw - 40px); 
+    max-width: 350px; 
+    right: 20px; 
   }
-
-  .CMS {
-    font-size: 22px;
-  }
-
-  .header-icons i {
-    font-size: 19px;
-  }
-
-  .main-body {
-    flex-direction: row;
-  }
-
-  aside {
-    width: 220px; /* Трошки зменшуємо ширину бічної панелі */
-  }
-
-  .pagination-container {
-    justify-content: center;
-  }
-
-  .pagination-button {
-    padding: 9px 18px;
-    font-size: 15px;
-  }
-
-  .content {
-    padding: 18px;
-  }
-
-  .profile-avatar {
-    width: 45px;
-    height: 45px;
-  }
-
-  /* #addStudentForm {
-    width: 75%;
-  } */
 }
 
-/* Для екранів від 769px до 1024px (стандартні екрани) */
+/* Середні екрани (769px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
-  header {
-    height: 70px;
-  }
-
-  .CMS {
-    font-size: 24px;
-  }
-
-  .header-icons i {
-    font-size: 20px;
-  }
-
-  .main-body {
-    flex-direction: row;
-  }
-
-  aside {
-    width: 250px;
-  }
-
-  .pagination-container {
-    justify-content: flex-end;
-  }
-
-  .pagination-button {
-    padding: 10px 20px;
-    font-size: 16px;
-  }
-
-  .content {
-    padding: 20px;
-  }
-
-  .profile-avatar {
-    width: 50px;
-    height: 50px;
-  }
-
-  /* #addStudentForm {
-    width: 70%;
-  } */
+  aside { width: 200px; } /* Зменшено ширину для середніх екранів */
+  .content { padding: 20px; }
+  .profile-avatar { width: 50px; height: 50px; }
 }
 
-/* Для екранів від 1025px до 1440px (ноутбуки) */
+/* Ноутбуки (1025px - 1440px) */
 @media (min-width: 1025px) and (max-width: 1440px) {
-  header {
-    height: 75px;
-  }
-
-  .CMS {
-    font-size: 26px;
-  }
-
-  .header-icons i {
-    font-size: 22px;
-  }
-
-  .pagination-container {
-    justify-content: center;
-  }
-
-  .pagination-button {
-    padding: 12px 24px;
-    font-size: 18px;
-  }
-
-  .content {
-    padding: 25px;
-  }
-
-  .profile-avatar {
-    width: 55px;
-    height: 55px;
-  }
-
-  /* #addStudentForm {
-    width: 60%;
-  } */
+  aside { width: 300px; } /* Збільшено ширину */
+  .content { padding: 25px; }
+  .profile-avatar { width: 55px; height: 55px; }
 }
 
-/* Для екранів від 1441px (десктопи) */
+/* Десктопи (1441px+) */
 @media (min-width: 1441px) {
-  header {
-    height: 80px;
-  }
-
-  .CMS {
-    font-size: 28px;
-  }
-
-  .header-icons i {
-    font-size: 24px;
-  }
-
-  .main-body {
-    flex-direction: row;
-  }
-
-  aside {
-    width: 300px;
-  }
-
-  .pagination-container {
-    justify-content: center;
-  }
-
-  .pagination-button {
-    padding: 14px 28px;
-    font-size: 20px;
-  }
-
-  .content {
-    padding: 30px;
-  }
-
-  .profile-avatar {
-    width: 60px;
-    height: 60px;
-  }
-
-  /* #addStudentForm {
-    width: 50%;
-  } */
+  aside { width: 300px; } /* Збільшено ширину */
+  .content { padding: 30px; }
+  .profile-avatar { width: 60px; height: 60px; }
 }
