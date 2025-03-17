@@ -32,11 +32,37 @@ document.addEventListener("DOMContentLoaded", function () {
         { group: "KN-21", name: "John Smith", gender: "M", birthday: "11.05.2004", status: "Active" },
         { group: "KN-21", name: "Jane Doe", gender: "F", birthday: "22.04.2003", status: "Inactive" }
     ];
-    
+
     const studentsPerPage = 10;
     let currentPage = 1;
     let studentToDelete = null;
     let editingStudentRow = null;
+
+    // Функція для заповнення випадаючого меню групами
+    function populateGroupDropdown() {
+        // Отримуємо унікальні групи з масиву students
+        const groups = [...new Set(students.map(student => student.group))];
+        const addGroupSelect = elements.addStudentForm.querySelector("#group");
+        const editGroupSelect = elements.editStudentForm.querySelector("#group");
+
+        // Заповнюємо випадаюче меню для форми додавання
+        addGroupSelect.innerHTML = "";
+        groups.forEach(group => {
+            const option = document.createElement("option");
+            option.value = group;
+            option.textContent = group;
+            addGroupSelect.appendChild(option);
+        });
+
+        // Заповнюємо випадаюче меню для форми редагування
+        editGroupSelect.innerHTML = "";
+        groups.forEach(group => {
+            const option = document.createElement("option");
+            option.value = group;
+            option.textContent = group;
+            editGroupSelect.appendChild(option);
+        });
+    }
 
     // Утиліти
     const formatDate = date => {
@@ -49,43 +75,12 @@ document.addEventListener("DOMContentLoaded", function () {
         elements.tableBody.innerHTML = "";
         const start = (currentPage - 1) * studentsPerPage;
         const end = Math.min(start + studentsPerPage, students.length);
-        
-        students.slice(start, end).forEach((student, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td><input type="checkbox"></td>
-                <td>${student.group}</td>
-                <td>${student.name}</td>
-                <td>${student.gender}</td>
-                <td>${student.birthday}</td>
-                <td><i class="fa-solid fa-circle" style="color: ${student.status === "Active" ? "green" : "gray"};"></i></td>
-                <td>
-                    <i class="fa-solid fa-pen" data-index="${start + index}"></i>
-                    <i class="fa-solid fa-xmark" data-index="${start + index}"></i>
-                </td>
-            `;
-            elements.tableBody.appendChild(row);
-        });
-        updatePagination();
-        updateCheckboxListeners();
-    }
-    
-    // Оновлення пагінації
-    function updatePagination() {
-        document.getElementById("prev-page").disabled = currentPage === 1;
-        document.getElementById("next-page").disabled = currentPage === Math.ceil(students.length / studentsPerPage);
-    }
-    
-    function renderTable() {
-        elements.tableBody.innerHTML = "";
-        const start = (currentPage - 1) * studentsPerPage;
-        const end = Math.min(start + studentsPerPage, students.length);
 
         students.slice(start, end).forEach((student, index) => {
             const row = document.createElement("tr");
             const initials = student.name.split(" ").map(n => n[0] + ".").join(" ");
             row.innerHTML = `
-                <td><input type="checkbox"></td>
+                <td><input type="checkbox" data-index="${start + index}"></td>
                 <td data-label="Group">${student.group}</td>
                 <td data-label="Name" data-initials="${initials}">${student.name}</td>
                 <td data-label="Gender">${student.gender}</td>
@@ -100,17 +95,92 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         updatePagination();
         updateCheckboxListeners();
+        populateGroupDropdown(); // Оновлюємо випадаюче меню після рендерингу
     }
+
+    // Оновлення пагінації
+    function updatePagination() {
+        document.getElementById("prev-page").disabled = currentPage === 1;
+        document.getElementById("next-page").disabled = currentPage === Math.ceil(students.length / studentsPerPage);
+    }
+
     // Обробка чекбоксів
     function updateCheckboxListeners() {
         const studentCheckboxes = document.querySelectorAll("td input[type='checkbox']");
+        const editIcons = document.querySelectorAll(".fa-pen");
+        const deleteIcons = document.querySelectorAll(".fa-xmark");
+
+        // Обробка глобального чекбокса
         elements.mainCheckbox.addEventListener("change", () => {
-            studentCheckboxes.forEach(cb => cb.checked = elements.mainCheckbox.checked);
+            const isChecked = elements.mainCheckbox.checked;
+            studentCheckboxes.forEach(cb => {
+                cb.checked = isChecked;
+            });
+
+            // Якщо глобальний чекбокс активовано, вимикаємо редагування
+            editIcons.forEach(icon => {
+                icon.style.pointerEvents = isChecked ? "none" : "auto";
+                icon.style.opacity = isChecked ? "0.5" : "1";
+            });
         });
-        
+
+        // Обробка одиничних чекбоксів
         studentCheckboxes.forEach(cb => {
             cb.addEventListener("change", () => {
-                elements.mainCheckbox.checked = [...studentCheckboxes].every(cb => cb.checked);
+                const checkedBoxes = document.querySelectorAll("td input[type='checkbox']:checked");
+                const checkedCount = checkedBoxes.length;
+
+                // Оновлюємо стан глобального чекбокса
+                elements.mainCheckbox.checked = checkedCount === studentCheckboxes.length;
+
+                // Керуємо доступністю іконок редагування
+                if (checkedCount === 1) {
+                    editIcons.forEach(icon => {
+                        icon.style.pointerEvents = "auto";
+                        icon.style.opacity = "1";
+                    });
+                } else {
+                    editIcons.forEach(icon => {
+                        icon.style.pointerEvents = "none";
+                        icon.style.opacity = "0.5";
+                    });
+                }
+            });
+        });
+
+        // Обробка кліків на іконки редагування
+        editIcons.forEach(icon => {
+            icon.addEventListener("click", e => {
+                const checkedBoxes = document.querySelectorAll("td input[type='checkbox']:checked");
+                if (checkedBoxes.length === 1) {
+                    const index = parseInt(checkedBoxes[0].dataset.index);
+                    editingStudentRow = index;
+                    const student = students[index];
+                    const editGroupSelect = elements.editStudentForm.querySelector("#group");
+                    editGroupSelect.value = student.group; // Встановлюємо значення групи
+                    elements.editStudentForm.querySelector("#name").value = student.name;
+                    elements.editStudentForm.querySelector("#gender").value = student.gender;
+                    elements.editStudentForm.querySelector("#birthday").value = student.birthday.split(".").reverse().join("-");
+                    elements.editStudentForm.classList.remove("hidden");
+                }
+            });
+        });
+
+        // Обробка кліків на іконки видалення
+        deleteIcons.forEach(icon => {
+            icon.addEventListener("click", e => {
+                const checkedBoxes = document.querySelectorAll("td input[type='checkbox']:checked");
+                if (checkedBoxes.length === 0) {
+                    studentToDelete = parseInt(e.target.dataset.index);
+                    elements.studentName.textContent = students[studentToDelete].name;
+                    elements.deleteConfirmation.classList.remove("hidden");
+                } else if (elements.mainCheckbox.checked) {
+                    elements.studentName.textContent = "всіх студентів";
+                    elements.deleteConfirmation.classList.remove("hidden");
+                } else {
+                    elements.studentName.textContent = `${checkedBoxes.length} студентів`;
+                    elements.deleteConfirmation.classList.remove("hidden");
+                }
             });
         });
     }
@@ -142,49 +212,69 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Події
+    // Події для кнопки "Add Student"
     elements.addStudentBtn.addEventListener("click", () => {
+        if (!elements.deleteConfirmation.classList.contains("hidden")) {
+            return;
+        }
         elements.addStudentForm.classList.remove("hidden");
         elements.studentForm.reset();
         editingStudentRow = null;
     });
 
-    elements.tableBody.addEventListener("click", e => {
-        const index = e.target.dataset.index;
-        if (e.target.classList.contains("fa-pen") && index) {
-            editingStudentRow = parseInt(index);
-            const student = students[editingStudentRow];
-            elements.editStudentForm.querySelector("#group").value = student.group;
-            elements.editStudentForm.querySelector("#name").value = student.name;
-            elements.editStudentForm.querySelector("#gender").value = student.gender;
-            elements.editStudentForm.querySelector("#birthday").value = student.birthday.split(".").reverse().join("-");
-            elements.editStudentForm.classList.remove("hidden");
+    // Видалення студента(ів)
+    document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
+        const checkedBoxes = document.querySelectorAll("td input[type='checkbox']:checked");
+        if (elements.mainCheckbox.checked) {
+            students = [];
+            currentPage = 1;
+        } else if (checkedBoxes.length > 0) {
+            const indicesToDelete = Array.from(checkedBoxes)
+                .map(cb => parseInt(cb.dataset.index))
+                .sort((a, b) => b - a);
+
+            indicesToDelete.forEach(index => {
+                students.splice(index, 1);
+            });
+
+            const maxPage = Math.ceil(students.length / studentsPerPage);
+            if (currentPage > maxPage && maxPage > 0) {
+                currentPage = maxPage;
+            } else if (students.length === 0) {
+                currentPage = 1;
+            }
+        } else if (studentToDelete !== null) {
+            students.splice(studentToDelete, 1);
+            studentToDelete = null;
+
+            const maxPage = Math.ceil(students.length / studentsPerPage);
+            if (currentPage > maxPage && maxPage > 0) {
+                currentPage = maxPage;
+            } else if (students.length === 0) {
+                currentPage = 1;
+            }
         }
-        if (e.target.classList.contains("fa-xmark") && index) {
-            studentToDelete = parseInt(index);
-            elements.studentName.textContent = students[studentToDelete].name;
-            elements.deleteConfirmation.classList.remove("hidden");
-        }
+        elements.deleteConfirmation.classList.add("hidden");
+        renderTable();
     });
 
-    // Закриття вікон
+    // Закриття модального вікна через хрестик
     document.querySelectorAll(".fa-xmark.closeIcon").forEach(icon => {
         icon.addEventListener("click", () => {
             icon.closest("div").classList.add("hidden");
+            studentToDelete = null;
+            elements.mainCheckbox.checked = false;
+            const studentCheckboxes = document.querySelectorAll("td input[type='checkbox']");
+            studentCheckboxes.forEach(cb => cb.checked = false);
         });
     });
 
     document.getElementById("cancelDeleteBtn").addEventListener("click", () => {
         elements.deleteConfirmation.classList.add("hidden");
-    });
-
-    document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
-        if (studentToDelete !== null) {
-            students.splice(studentToDelete, 1);
-            studentToDelete = null;
-            renderTable();
-        }
-        elements.deleteConfirmation.classList.add("hidden");
+        studentToDelete = null;
+        elements.mainCheckbox.checked = false;
+        const studentCheckboxes = document.querySelectorAll("td input[type='checkbox']");
+        studentCheckboxes.forEach(cb => cb.checked = false);
     });
 
     elements.studentForm.addEventListener("submit", addStudent);
@@ -221,13 +311,15 @@ document.addEventListener("DOMContentLoaded", function () {
             elements.notificationDropdown.classList.remove("show");
         }
     });
+
     // Анімація дзвіночка при подвійному кліку
-elements.bellIcon.addEventListener("dblclick", () => {
-    elements.indicator.classList.toggle("show");
-    elements.notificationDropdown.classList.toggle("show");
-    elements.bellIcon.classList.add("bell-animation");
-    setTimeout(() => elements.bellIcon.classList.remove("bell-animation"), 500);
-});
+    elements.bellIcon.addEventListener("dblclick", () => {
+        elements.indicator.classList.toggle("show");
+        elements.notificationDropdown.classList.toggle("show");
+        elements.bellIcon.classList.add("bell-animation");
+        setTimeout(() => elements.bellIcon.classList.remove("bell-animation"), 500);
+    });
+
     // Профіль
     elements.profileContainer.addEventListener("click", e => {
         e.stopPropagation();
@@ -246,4 +338,16 @@ elements.bellIcon.addEventListener("dblclick", () => {
 
     // Ініціалізація
     renderTable();
+    
+    elements.addStudentBtn.addEventListener("click", () => {
+        if (!elements.deleteConfirmation.classList.contains("hidden")) {
+            return;
+        }
+        elements.addStudentForm.classList.remove("hidden");
+        elements.studentForm.reset();
+        editingStudentRow = null;
+        elements.mainCheckbox.checked = false;
+        const studentCheckboxes = document.querySelectorAll("td input[type='checkbox']");
+        studentCheckboxes.forEach(cb => cb.checked = false);
+    });
 });
