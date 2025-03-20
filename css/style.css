@@ -9,6 +9,7 @@ body {
   min-height: 100vh;
   background-color: #FCF7EC;
   font-family: sans-serif;
+  color: #333333; /* Темніший текст для кращого контрасту (≈4.5:1) */
 }
 
 /* Хедер */
@@ -19,14 +20,16 @@ header {
   align-items: center;
   padding: 0 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
 }
 
 .CMS a {
   font-weight: bold;
-  color: #9BA79C;
+  color: #333333;
   text-decoration: none;
 }
 
+/* Іконки хедера */
 .header-icons {
   display: flex;
   align-items: center;
@@ -36,13 +39,13 @@ header {
 
 .header-icons i {
   font-size: 20px;
-  color: #9BA79C;
+  color: #333333;
   cursor: pointer;
 }
 
 .header-icons p {
   font-weight: bold;
-  color: #9BA79C;
+  color: #333333;
 }
 
 /* Сховані елементи */
@@ -70,13 +73,12 @@ header {
   display: block;
 }
 
-
 .notification-dropdown {
   position: absolute;
-  top: 40px; /* Відстань від дзвіночка */
-  right: 0; /* Спочатку прив'язуємо до правого краю контейнера */
-  background: white;
-  border: 1px solid #ddd;
+  top: 40px;
+  right: 0;
+  background: #FCF7EC; /* Узгоджено з фоном body */
+  border: 1px solid #9BA79C; /* Ваш сірий для бордерів */
   border-radius: 5px;
   width: 300px;
   max-width: calc(100vw - 40px);
@@ -90,16 +92,16 @@ header {
 }
 
 .notification-dropdown.show {
-  display: block;
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
+
 .notification-item {
   display: flex;
   align-items: center;
   padding: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #9BA79C;
 }
 
 .notification-item:last-child {
@@ -121,12 +123,14 @@ header {
 .notification-item .name {
   font-weight: bold;
   margin-bottom: 3px;
+  color: #333333;
 }
 
 .notification-item .message {
-  background: #f4f4f4;
+  background: #D5E4CF; /* Ваш світлий зелений */
   padding: 8px 12px;
   border-radius: 5px;
+  color: #333333;
 }
 
 .bell-animation {
@@ -163,7 +167,7 @@ header {
   position: absolute;
   top: 60px;
   right: 0;
-  background: white;
+  background: #FCF7EC;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   width: 150px;
@@ -174,14 +178,14 @@ header {
 .dropdown-menu a {
   display: block;
   padding: 10px;
-  color: #333;
+  color: #333333;
   text-decoration: none;
   border-radius: 5px;
 }
 
 .dropdown-menu a:hover {
   background: #9BA79C;
-  color: white;
+  color: #FFFFFF;
 }
 
 /* Основний вміст */
@@ -190,8 +194,9 @@ header {
 }
 
 aside {
-  width: 300px; /* Збільшено ширину для десктопів */
+  width: 300px;
   padding: 20px;
+
 }
 
 nav ul {
@@ -205,7 +210,7 @@ nav ul li {
 nav ul li a {
   display: block;
   padding: 10px 15px;
-  color: #9BA79C;
+  color: #333333;
   font-size: large;
   text-decoration: none;
   border-radius: 5px;
@@ -213,18 +218,21 @@ nav ul li a {
 }
 
 nav ul li a:hover {
-  background-color: #D5E4CF;
-  color: #000;
+  background-color: #AFC2AE;
+  color: #FFFFFF;
 }
 
 nav ul li a.active {
-  background-color: #AFC2AE;
-  color: white;
+  background-color: #667565; /* Замінено green на вашу палітру */
+  color: #FFFFFF;
 }
 
 .content {
   flex-grow: 1;
   padding: 20px;
+  background-color: #FCF7EC;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* Таблиця */
@@ -232,19 +240,21 @@ table {
   width: 100%;
   border-collapse: collapse;
   background: #FCF7EC;
+  table-layout: auto;
 }
 
 th, td {
-  border: 1px solid #ccc;
+  border: 1px solid #9BA79C; /* Ваш сірий для бордерів */
   padding: 10px;
   text-align: center;
   vertical-align: middle;
+  color: #333333;
 }
 
 th {
-  background: #AFC2AE;
+  background: #667565;
   font-weight: bold;
-  color: #FCF7EC;
+  color: #FFFFFF;
 }
 
 tr:nth-child(even) {
@@ -254,14 +264,20 @@ tr:nth-child(even) {
 table input[type="checkbox"] {
   transform: scale(1.2);
   cursor: pointer;
+  margin-right: 5px; /* Додано відступ для кращого відображення */
+}
+
+td label {
+  display: flex;
+  align-items: center;
 }
 
 td i {
-  margin: 0 3px; /* Зменшено відстань між іконками */
+  margin: 0 3px;
   cursor: pointer;
 }
 
-td:nth-child(3)::before { /* Ініціали для імені */
+td:nth-child(3)::before {
   content: attr(data-initials);
   display: none;
 }
@@ -285,8 +301,8 @@ td:nth-child(3)::before { /* Ініціали для імені */
 }
 
 .add-student-btn, .pagination-button {
-  background-color: #AFC2AE;
-  color: white;
+  background-color: #667565; /* Замінено green на вашу палітру */
+  color: #FFFFFF;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -300,7 +316,7 @@ td:nth-child(3)::before { /* Ініціали для імені */
 }
 
 .pagination-button:disabled {
-  background-color: #dcdcdc;
+  background-color: #D5E4CF;
   cursor: not-allowed;
 }
 
@@ -317,7 +333,7 @@ td:nth-child(3)::before { /* Ініціали для імені */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
+  background: #FCF7EC;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -329,7 +345,7 @@ td:nth-child(3)::before { /* Ініціали для імені */
 #deleteConfirmation button {
   padding: 10px;
   background-color: #ff4d4d;
-  color: white;
+  color: #FFFFFF;
   border: none;
   cursor: pointer;
   margin-top: 10px;
@@ -344,6 +360,7 @@ td:nth-child(3)::before { /* Ініціали для імені */
   top: 10px;
   right: 10px;
   cursor: pointer;
+  color: #333333;
 }
 
 #addStudentForm form, #editStudentForm form {
@@ -351,16 +368,25 @@ td:nth-child(3)::before { /* Ініціали для імені */
   flex-direction: column;
 }
 
-#addStudentForm input, #addStudentForm select, #editStudentForm input, #editStudentForm select {
+#addStudentForm label, #editStudentForm label {
+  margin-bottom: 5px;
+  color: #333333;
+}
+
+#addStudentForm input, #addStudentForm select,
+#editStudentForm input, #editStudentForm select {
   margin-bottom: 10px;
   padding: 8px;
   font-size: 14px;
+  background-color: #FFFFFF;
+  color: #333333;
+  border: 1px solid #9BA79C;
 }
 
 #addStudentForm button, #editStudentForm button {
   padding: 10px;
   background-color: #AFC2AE;
-  color: white;
+  color: #FFFFFF;
   border: none;
   cursor: pointer;
   margin-top: 10px;
@@ -372,8 +398,8 @@ td:nth-child(3)::before { /* Ініціали для імені */
 
 /* Адаптивність */
 
-/* Мобільні (до 480px) */
-@media (max-width: 480px) {
+/* Мобільні (до 500px) */
+@media (max-width: 500px) {
   header { height: 60px; padding: 0 10px; }
   .CMS a { font-size: 18px; }
   .header-icons { gap: 10px; }
@@ -381,9 +407,11 @@ td:nth-child(3)::before { /* Ініціали для імені */
   .header-icons p { font-size: 14px; }
   .main-body { flex-direction: column; }
   aside { width: 100%; padding: 10px; }
-  nav ul { display: flex;
-         flex-wrap: wrap;
-            flex-direction: column; }
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
   nav ul li { margin-bottom: 0; }
   nav ul li a { padding: 6px 8px; font-size: 14px; }
   .content { padding: 10px; }
@@ -391,23 +419,26 @@ td:nth-child(3)::before { /* Ініціали для імені */
   .students-header h2 { font-size: 20px; }
   .add-student-btn { width: 100%; padding: 8px; font-size: 14px; }
   table, thead, tbody, th, td, tr { display: block; }
-  thead tr { display: none; }
-  tr { margin-bottom: 10px; border: 1px solid #ccc; }
-  td { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 5px; 
-    text-align: left; 
-    font-size: 12px; 
+  thead tr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); }
+  tr { margin-bottom: 10px; border: 1px solid #9BA79C; }
+  td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    text-align: left;
+    font-size: 12px;
+    color: #333333;
   }
-  td:before { 
-    content: attr(data-label); 
-    font-weight: bold; 
-    margin-right: 10px; 
-    font-size: 12px; 
+  td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 12px;
+    color: #333333;
+    min-width: 80px;
   }
-  td:nth-child(1):before { content: "✔"; }
+  td:nth-child(1):before { content: "Select"; } /* Замінено "✔" на текст */
   td:nth-child(2):before { content: "Group"; }
   td:nth-child(3):before { content: "Name"; }
   td:nth-child(4):before { content: "Gender"; }
@@ -418,28 +449,28 @@ td:nth-child(3)::before { /* Ініціали для імені */
   td:nth-child(3)::before { display: inline; }
   td i { font-size: 14px; }
   .profile-avatar { width: 35px; height: 35px; }
-  .notification-dropdown { 
-    top: 40px; /* Зменшено відстань для компактності */
-    right: auto; /* Видаляємо зміщення */
-    left: 50%; /* Центруємо відносно контейнера */
-    transform: translateX(-50%) translateY(-10px); /* Центрування по горизонталі */
-    width: calc(100vw - 20px); 
-    max-width: 300px; 
-    padding: 5px; 
+  .notification-dropdown {
+    top: 40px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    width: calc(100vw - 20px);
+    max-width: 300px;
+    padding: 5px;
   }
   .notification-dropdown.show {
-    transform: translateX(-50%) translateY(0); /* Корекція при показі */
+    transform: translateX(-50%) translateY(0);
   }
   .notification-item { padding: 5px; }
-  .notification-item img { display: none; } /* Приховуємо аватарки */
+  .notification-item img { display: none; }
   .notification-content .name { font-size: 12px; }
   .notification-content .message { font-size: 11px; padding: 5px 8px; }
   .pagination-container { flex-direction: column; gap: 5px; }
   .pagination-button { width: 100%; padding: 8px; font-size: 14px; }
 }
 
-/* Планшети та середні екрани (481px - 768px) */
-@media (min-width: 481px) and (max-width: 768px) {
+/* Планшети та середні екрани (501px - 768px) */
+@media (min-width: 501px) and (max-width: 768px) {
   .main-body { flex-direction: column; }
   aside { width: 100%; padding: 10px; }
   nav ul { display: flex; justify-content: center; gap: 10px; }
@@ -448,30 +479,30 @@ td:nth-child(3)::before { /* Ініціали для імені */
   .content { padding: 15px; }
   table { width: 100%; }
   .profile-avatar { width: 45px; height: 45px; }
-  .notification-dropdown { 
-    width: calc(100vw - 40px); 
-    max-width: 350px; 
-    right: 20px; 
+  .notification-dropdown {
+    width: calc(100vw - 40px);
+    max-width: 350px;
+    right: 20px;
   }
 }
 
 /* Середні екрани (769px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
-  aside { width: 200px; } /* Зменшено ширину для середніх екранів */
+  aside { width: 200px; }
   .content { padding: 20px; }
   .profile-avatar { width: 50px; height: 50px; }
 }
 
 /* Ноутбуки (1025px - 1440px) */
 @media (min-width: 1025px) and (max-width: 1440px) {
-  aside { width: 300px; } /* Збільшено ширину */
+  aside { width: 300px; }
   .content { padding: 25px; }
   .profile-avatar { width: 55px; height: 55px; }
 }
 
 /* Десктопи (1441px+) */
 @media (min-width: 1441px) {
-  aside { width: 300px; } /* Збільшено ширину */
+  aside { width: 300px; }
   .content { padding: 30px; }
   .profile-avatar { width: 60px; height: 60px; }
 }
