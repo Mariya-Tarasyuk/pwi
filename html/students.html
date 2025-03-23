@@ -10,7 +10,7 @@
 </head>
 <body>
     <header class="header">
-        <h2 class="CMS"><a href="students.html">CMS</a></h2>
+        <h1 class="CMS"><a href="students.html">CMS</a></h1>
         <div class="header-icons">
             <!-- Контейнер для вікна сповіщень -->
             <div class="notification-container">
@@ -19,14 +19,14 @@
                 <!-- Випадаюче вікно -->
                 <div class="notification-dropdown">
                     <div class="notification-item">
-                        <img src="/images/avatar-3.jpg" alt="User Avatar">
+                        <img src="/images/avatar-3.jpg" alt="User Avatar 1">
                         <div class="notification-content">
                             <div class="name">Ім'я Користувача</div>
                             <div class="message">Це ваше нове повідомлення!</div>
                         </div>
                     </div>
                     <div class="notification-item">
-                        <img src="/images/avatar-2.jpg" alt="User Avatar">
+                        <img src="/images/avatar-2.jpg" alt="User Avatar 2">
                         <div class="notification-content">
                             <div class="name">Олександр</div>
                             <div class="message">Ваш запит підтверджено.</div>
@@ -37,7 +37,7 @@
             <!-- Контейнер для вікна профілю -->
             <div class="profile-container">
                 <div class="profile-info">
-                    <img src="/images/avatar-1.jpg" alt="Avatar" class="profile-avatar">
+                    <img src="/images/avatar-1.jpg" alt="Profile Avatar" class="profile-avatar">
                     <p>Mariya Tarasyuk</p>
                 </div>
                 <!-- Випадаюче вікно -->
@@ -72,7 +72,12 @@
             <table id="studentsTable">
                 <thead>
                     <tr>
-                        <th><input type="checkbox"></th>
+                        <th>
+                            <label for="mainCheckbox">
+                                <input type="checkbox" id="mainCheckbox">
+                                Select All
+                            </label>
+                        </th>
                         <th>Group</th>
                         <th>Name</th>
                         <th>Gender</th>
@@ -82,77 +87,94 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Сюди динамічно додаватимуться студенти -->
+                    <!-- Приклад рядка -->
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="studentCheckbox1" aria-label="select student">
+                        </td>
+                        <td>KN-21</td>
+                        <td data-initials="JD">John Doe</td>
+                        <td>M</td>
+                        <td>11.05.2004</td>
+                        <td><span style="color: green;">●</span></td>
+                        <td>
+                            <i class="fa-solid fa-pen"></i>
+                            <i class="fa-solid fa-xmark"></i>
+                        </td>
+                    </tr>
+                    <!-- Сюди динамічно додаватимуться інші студенти -->
                 </tbody>
             </table>
 
             <!-- Пагінація -->
             <div class="pagination-container">
-                <button class="pagination-button" id="prev-page">Previos</button>
+                <button class="pagination-button" id="prev-page">Previous</button>
                 <button class="pagination-button" id="next-page">Next</button>
             </div>
 
             <!-- Вікно додавання студента -->
             <div id="addStudentForm" class="hidden">
                 <h3>Add New Student
-                    <i id="closeBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i>
+                    <i id="closeAddBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i>
                 </h3>
-                <form id="studentForm">
+                <form id="addStudentFormElement">
                     <div>
-                        <label for="group">Group:</label>
-                        <select id="group" required>
-                            <!-- Опції будуть додані динамічно -->
+                        <label for="addGroup">Group:</label>
+                        <select id="addGroup" required>
+                            <option value="" disabled selected>Select a group</option>
                         </select>
                     </div>
                     <div>
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" required>
+                        <label for="addName">Name:</label>
+                        <input type="text" id="addName" required>
                     </div>
                     <div>
-                        <label for="gender">Gender:</label>
-                        <select id="gender" required>
+                        <label for="addGender">Gender:</label>
+                        <select id="addGender" required>
+                            <option value="" disabled selected>Select gender</option>
                             <option value="M">Male</option>
                             <option value="F">Female</option>
                         </select>
                     </div>
                     <div>
-                        <label for="birthday">Birthday:</label>
-                        <input type="date" id="birthday" required>
+                        <label for="addBirthday">Birthday:</label>
+                        <input type="date" id="addBirthday" required>
                     </div>
-                    <button type="submit" id="addBtn">Add Student</button>
-                    <button type="button" id="okBtn">OK</button>
+                    <button type="submit" id="addSubmitBtn">Add Student</button>
+                    <button type="button" id="addOkBtn">OK</button>
                 </form>
             </div>
 
             <!-- Вікно редагування студента -->
             <div id="editStudentForm" class="hidden">
                 <h3>Edit Student
-                    <i id="closeBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i>
+                    <i id="closeEditBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i>
                 </h3>
-                <form id="studentForm">
+                <form id="editStudentFormElement">
                     <div>
-                        <label for="group">Group:</label>
-                        <select id="group" required>
-                            <!-- Опції будуть додані динамічно -->
+                        <label for="editGroup">Group:</label>
+                        <select id="editGroup" required>
+                            <option value="" disabled selected>Select a group</option>
                         </select>
                     </div>
                     <div>
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" required>
+                        <label for="editName">Name:</label>
+                        <input type="text" id="editName" required>
                     </div>
                     <div>
-                        <label for="gender">Gender:</label>
-                        <select id="gender" required>
+                        <label for="editGender">Gender:</label>
+                        <select id="editGender" required>
+                            <option value="" disabled selected>Select gender</option>
                             <option value="M">Male</option>
                             <option value="F">Female</option>
                         </select>
                     </div>
                     <div>
-                        <label for="birthday">Birthday:</label>
-                        <input type="date" id="birthday" required>
+                        <label for="editBirthday">Birthday:</label>
+                        <input type="date" id="editBirthday" required>
                     </div>
-                    <button type="submit" id="addBtn">Add Student</button>
-                    <button type="button" id="okBtn">OK</button>
+                    <button type="submit" id="editSubmitBtn">Save Changes</button>
+                    <button type="button" id="editOkBtn">OK</button>
                 </form>
             </div>
 
