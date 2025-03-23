@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Підключення Font Awesome для іконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Підключення CSS (якщо є) -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <h1 class="logo">CMS</h1>
+        </div>
+        <div class="header-right">
+            <div class="notification-bell">
+                <i class="fa-solid fa-bell"></i>
+                <span class="notification-indicator"></span>
+            </div>
+            <div class="profile-container">
+                <img src="profile-pic.jpg" alt="Profile Picture" class="profile-pic">
+                <span class="profile-name">Mariya Tarasyuk</span>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item">Profile</a>
+                    <a href="#" class="dropdown-item" id="logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Aside (бічна панель) -->
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <ul>
+                <li>
+                    <a href="dashboard.html" class="sidebar-link active">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="students.html" class="sidebar-link">
+                        <span>Students</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="tasks.html" class="sidebar-link">
+                        <span>Tasks</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Основний контент -->
+    <main>
+        <div class="page-header">
+            <h2>Dashboard</h2>
+        </div>
+        <div class="page-content">
+            <p>This is the Dashboard page content.</p>
+        </div>
+    </main>
+</body>
+</html>
