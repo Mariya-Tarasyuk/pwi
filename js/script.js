@@ -41,27 +41,27 @@ document.addEventListener("DOMContentLoaded", function () {
     let editingStudentRow = null;
 
     // Функція для заповнення випадаючого меню групами
-    function populateGroupDropdown() {
-        const groups = [...new Set(students.map((student) => student.group))];
-        const addGroupSelect = elements.addStudentForm.querySelector("#addGroup");
-        const editGroupSelect = elements.editStudentForm.querySelector("#editGroup");
+    // function populateGroupDropdown() {
+    //     const groups = [...new Set(students.map((student) => student.group))];
+    //     const addGroupSelect = elements.addStudentForm.querySelector("#addGroup");
+    //     const editGroupSelect = elements.editStudentForm.querySelector("#editGroup");
 
-        addGroupSelect.innerHTML = "<option value=\"\" disabled selected>Select a group</option>";
-        groups.forEach((group) => {
-            const option = document.createElement("option");
-            option.value = group;
-            option.textContent = group;
-            addGroupSelect.appendChild(option);
-        });
+    //     addGroupSelect.innerHTML = "<option value=\"\" disabled selected>Select a group</option>";
+    //     groups.forEach((group) => {
+    //         const option = document.createElement("option");
+    //         option.value = group;
+    //         option.textContent = group;
+    //         addGroupSelect.appendChild(option);
+    //     });
 
-        editGroupSelect.innerHTML = "<option value=\"\" disabled selected>Select a group</option>";
-        groups.forEach((group) => {
-            const option = document.createElement("option");
-            option.value = group;
-            option.textContent = group;
-            editGroupSelect.appendChild(option);
-        });
-    }
+    //     editGroupSelect.innerHTML = "<option value=\"\" disabled selected>Select a group</option>";
+    //     groups.forEach((group) => {
+    //         const option = document.createElement("option");
+    //         option.value = group;
+    //         option.textContent = group;
+    //         editGroupSelect.appendChild(option);
+    //     });
+    // }
 
     // Утиліти
     const formatDate = (date) => {
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         updatePagination();
         updateCheckboxListeners();
-        populateGroupDropdown();
+     //   populateGroupDropdown();
     }
 
     // Оновлення пагінації
