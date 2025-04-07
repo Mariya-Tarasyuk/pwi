@@ -1,15 +1,12 @@
 /* eslint-env browser */
 document.addEventListener("DOMContentLoaded", function () {
-    // Елементи DOM
     const elements = {
         mainCheckbox: document.querySelector("th input[type=\"checkbox\"]"),
         tableBody: document.querySelector("#studentsTable tbody"),
         addStudentBtn: document.querySelector(".add-student-btn"),
         addStudentForm: document.getElementById("addStudentForm"),
-        editStudentForm: document.getElementById("editStudentForm"),
-        deleteConfirmation: document.getElementById("deleteConfirmation"),
         addStudentFormElement: document.getElementById("addStudentFormElement"),
-        editStudentFormElement: document.getElementById("editStudentFormElement"),
+        deleteConfirmation: document.getElementById("deleteConfirmation"),
         studentName: document.getElementById("studentName"),
         bellIcon: document.querySelector(".notification-bell"),
         notificationDropdown: document.querySelector(".notification-dropdown"),
@@ -17,22 +14,14 @@ document.addEventListener("DOMContentLoaded", function () {
         profileContainer: document.querySelector(".profile-container"),
         dropdownMenu: document.querySelector(".dropdown-menu"),
         logoutButton: document.getElementById("logout"),
+        formTitle: document.getElementById("formTitle"),
+        submitBtn: document.getElementById("submitBtn"),
     };
 
-    // Ініціалізація даних
     let students = [
-        { group: "KN-21", name: "John Smith", gender: "M", birthday: "11.05.2004", status: "Active" },
-        { group: "KN-21", name: "Jane Doe", gender: "F", birthday: "22.04.2003", status: "Inactive" },
-        { group: "KN-22", name: "Mark Spencer", gender: "M", birthday: "19.02.2002", status: "Active" },
-        { group: "KN-21", name: "Emily Johnson", gender: "F", birthday: "15.01.2001", status: "Active" },
-        { group: "KN-23", name: "Alice Brown", gender: "F", birthday: "25.12.2000", status: "Inactive" },
-        { group: "KN-21", name: "John Smith", gender: "M", birthday: "11.05.2004", status: "Active" },
-        { group: "KN-21", name: "Jane Doe", gender: "F", birthday: "22.04.2003", status: "Inactive" },
-        { group: "KN-22", name: "Mark Spencer", gender: "M", birthday: "19.02.2002", status: "Active" },
-        { group: "KN-21", name: "Emily Johnson", gender: "F", birthday: "15.01.2001", status: "Active" },
-        { group: "KN-23", name: "Alice Brown", gender: "F", birthday: "25.12.2000", status: "Inactive" },
-        { group: "KN-21", name: "John Smith", gender: "M", birthday: "11.05.2004", status: "Active" },
-        { group: "KN-21", name: "Jane Doe", gender: "F", birthday: "22.04.2003", status: "Inactive" },
+        { id: 1, group: "KN-21", name: "John Smith", gender: "M", birthday: "11.05.2004", status: "Active" },
+        { id: 2, group: "KN-21", name: "Jane Doe", gender: "F", birthday: "22.04.2003", status: "Inactive" },
+        { id: 3, group: "KN-22", name: "Mark Spencer", gender: "M", birthday: "19.02.2002", status: "Active" },
     ];
 
     const studentsPerPage = 10;
@@ -40,30 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let studentToDelete = null;
     let editingStudentRow = null;
 
-    // Функція для заповнення випадаючого меню групами
-    // function populateGroupDropdown() {
-    //     const groups = [...new Set(students.map((student) => student.group))];
-    //     const addGroupSelect = elements.addStudentForm.querySelector("#addGroup");
-    //     const editGroupSelect = elements.editStudentForm.querySelector("#editGroup");
-
-    //     addGroupSelect.innerHTML = "<option value=\"\" disabled selected>Select a group</option>";
-    //     groups.forEach((group) => {
-    //         const option = document.createElement("option");
-    //         option.value = group;
-    //         option.textContent = group;
-    //         addGroupSelect.appendChild(option);
-    //     });
-
-    //     editGroupSelect.innerHTML = "<option value=\"\" disabled selected>Select a group</option>";
-    //     groups.forEach((group) => {
-    //         const option = document.createElement("option");
-    //         option.value = group;
-    //         option.textContent = group;
-    //         editGroupSelect.appendChild(option);
-    //     });
-    // }
-
-    // Утиліти
     const formatDate = (date) => {
         const d = new Date(date);
         return String(d.getDate()).padStart(2, "0") + "." +
@@ -71,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
                d.getFullYear();
     };
 
-    // Рендеринг таблиці
     function renderTable() {
         elements.tableBody.innerHTML = "";
         const start = (currentPage - 1) * studentsPerPage;
@@ -79,16 +43,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         students.slice(start, end).forEach((student, index) => {
             const row = document.createElement("tr");
-            const initials = student.name.split(" ").map((n) => n[0] + ".").join(" ");
+            const initials = student.name.split(" ").map(n => n[0] + ".").join(" ");
             row.innerHTML = [
                 "<td><input type=\"checkbox\" aria-label=\"select student\" data-index=\"" + (start + index) + "\"></td>",
                 "<td data-label=\"Group\">" + student.group + "</td>",
                 "<td data-label=\"Name\" data-initials=\"" + initials + "\">" + student.name + "</td>",
                 "<td data-label=\"Gender\">" + student.gender + "</td>",
                 "<td data-label=\"Birthday\">" + student.birthday + "</td>",
-                "<td data-label=\"Status\">",
-                "<i class=\"fa-solid fa-circle\" style=\"color: " + (student.status === "Active" ? "green" : "gray") + ";\"></i>",
-                "</td>",
+                "<td data-label=\"Status\"><i class=\"fa-solid fa-circle\" style=\"color: " + (student.status === "Active" ? "green" : "gray") + ";\"></i></td>",
                 "<td data-label=\"Options\">",
                 "<i class=\"fa-solid fa-pen\" data-index=\"" + (start + index) + "\"></i>",
                 "<i class=\"fa-solid fa-xmark\" data-index=\"" + (start + index) + "\"></i>",
@@ -98,16 +60,91 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         updatePagination();
         updateCheckboxListeners();
-     //   populateGroupDropdown();
     }
 
-    // Оновлення пагінації
     function updatePagination() {
         document.getElementById("prev-page").disabled = currentPage === 1;
         document.getElementById("next-page").disabled = currentPage === Math.ceil(students.length / studentsPerPage);
     }
 
-    // Обробка чекбоксів
+    function validateForm(form) {
+        const firstName = form.querySelector("#addFirstName").value;
+        const lastName = form.querySelector("#addLastName").value;
+        const birthday = form.querySelector("#addBirthday").value;
+    
+        const nameRegex = /^[A-Za-zА-Яа-я]{2,}$/; // Тільки літери
+        const altNameRegex = /^[A-Za-zА-Яа-я\s-]{2,}$/; // Дозволяємо пробіли та дефіси
+        const useAltValidation = true; // Використовуємо альтернативну валідацію
+    
+        let isValid = true;
+        const regexToUse = useAltValidation ? altNameRegex : nameRegex;
+    
+        if (!regexToUse.test(firstName)) {
+            form.querySelector("#addFirstName").classList.add("error");
+            form.querySelector("#addFirstName").nextElementSibling?.remove();
+            form.querySelector("#addFirstName").insertAdjacentHTML("afterend", "<span class='error-msg'>Invalid first name</span>");
+            isValid = false;
+        } else {
+            form.querySelector("#addFirstName").classList.remove("error");
+            form.querySelector("#addFirstName").nextElementSibling?.remove();
+        }
+    
+        if (!regexToUse.test(lastName)) {
+            form.querySelector("#addLastName").classList.add("error");
+            form.querySelector("#addLastName").nextElementSibling?.remove();
+            form.querySelector("#addLastName").insertAdjacentHTML("afterend", "<span class='error-msg'>Invalid last name</span>");
+            isValid = false;
+        } else {
+            form.querySelector("#addLastName").classList.remove("error");
+            form.querySelector("#addLastName").nextElementSibling?.remove();
+        }
+    
+        const today = new Date();
+        const birthDate = new Date(birthday);
+        if (birthDate >= today) {
+            form.querySelector("#addBirthday").classList.add("error");
+            form.querySelector("#addBirthday").nextElementSibling?.remove();
+            form.querySelector("#addBirthday").insertAdjacentHTML("afterend", "<span class='error-msg'>Date must be in the past</span>");
+            isValid = false;
+        } else {
+            form.querySelector("#addBirthday").classList.remove("error");
+            form.querySelector("#addBirthday").nextElementSibling?.remove();
+        }
+    
+        return isValid;
+    }
+
+    function addStudent(e) {
+        e.preventDefault();
+        const form = e.target;
+        if (!validateForm(form)) return;
+
+        const firstName = form.querySelector("#addFirstName").value;
+        const lastName = form.querySelector("#addLastName").value;
+        const studentData = {
+            id: form.querySelector("#studentId").value || Date.now(),
+            group: form.querySelector("#addGroup").value,
+            name: `${firstName} ${lastName}`,
+            gender: form.querySelector("#addGender").value,
+            birthday: formatDate(form.querySelector("#addBirthday").value),
+            status: "Active",
+        };
+
+        if (Object.values(studentData).every(val => val)) {
+            if (editingStudentRow !== null) {
+                students[editingStudentRow] = studentData;
+                editingStudentRow = null;
+            } else {
+                students.push(studentData);
+            }
+            console.log(JSON.stringify(studentData, null, 2));
+            form.reset();
+            elements.addStudentForm.classList.add("hidden");
+            document.body.classList.remove("modal-open");
+            renderTable();
+        }
+    }
+
     function updateCheckboxListeners() {
         const studentCheckboxes = document.querySelectorAll("td input[type=\"checkbox\"]");
         const editIcons = document.querySelectorAll(".fa-pen");
@@ -115,55 +152,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
         elements.mainCheckbox.addEventListener("change", function () {
             const isChecked = elements.mainCheckbox.checked;
-            studentCheckboxes.forEach(function (cb) {
-                cb.checked = isChecked;
-            });
-
-            editIcons.forEach(function (icon) {
+            studentCheckboxes.forEach(cb => cb.checked = isChecked);
+            editIcons.forEach(icon => {
                 icon.style.pointerEvents = isChecked ? "none" : "auto";
                 icon.style.opacity = isChecked ? "0.5" : "1";
             });
         });
 
-        studentCheckboxes.forEach(function (cb) {
+        studentCheckboxes.forEach(cb => {
             cb.addEventListener("change", function () {
                 const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
-                const checkedCount = checkedBoxes.length;
-
-                elements.mainCheckbox.checked = checkedCount === studentCheckboxes.length;
-
-                if (checkedCount === 1) {
-                    editIcons.forEach(function (icon) {
-                        icon.style.pointerEvents = "auto";
-                        icon.style.opacity = "1";
-                    });
-                } else {
-                    editIcons.forEach(function (icon) {
-                        icon.style.pointerEvents = "none";
-                        icon.style.opacity = "0.5";
-                    });
-                }
+                elements.mainCheckbox.checked = checkedBoxes.length === studentCheckboxes.length;
+                editIcons.forEach(icon => {
+                    icon.style.pointerEvents = checkedBoxes.length === 1 ? "auto" : "none";
+                    icon.style.opacity = checkedBoxes.length === 1 ? "1" : "0.5";
+                });
             });
         });
 
-        editIcons.forEach(function (icon) {
+        editIcons.forEach(icon => {
             icon.addEventListener("click", function () {
                 const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
                 if (checkedBoxes.length === 1) {
                     const index = parseInt(checkedBoxes[0].dataset.index, 10);
                     editingStudentRow = index;
                     const student = students[index];
-                    const editGroupSelect = elements.editStudentForm.querySelector("#editGroup");
-                    editGroupSelect.value = student.group;
-                    elements.editStudentForm.querySelector("#editName").value = student.name;
-                    elements.editStudentForm.querySelector("#editGender").value = student.gender;
-                    elements.editStudentForm.querySelector("#editBirthday").value = student.birthday.split(".").reverse().join("-");
-                    elements.editStudentForm.classList.remove("hidden");
+                    const [firstName, lastName] = student.name.split(" ");
+                    elements.formTitle.textContent = "Edit Student";
+                    elements.submitBtn.textContent = "Save Changes";
+                    elements.addStudentForm.querySelector("#studentId").value = student.id;
+                    elements.addStudentForm.querySelector("#addGroup").value = student.group;
+                    elements.addStudentForm.querySelector("#addFirstName").value = firstName;
+                    elements.addStudentForm.querySelector("#addLastName").value = lastName || "";
+                    elements.addStudentForm.querySelector("#addGender").value = student.gender;
+                    elements.addStudentForm.querySelector("#addBirthday").value = student.birthday.split(".").reverse().join("-");
+                    elements.addStudentForm.classList.remove("hidden");
+                    document.body.classList.add("modal-open");
                 }
             });
         });
 
-        deleteIcons.forEach(function (icon) {
+        deleteIcons.forEach(icon => {
             icon.addEventListener("click", function (e) {
                 const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
                 if (checkedBoxes.length === 0) {
@@ -181,126 +210,57 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Додавання студента
-    function addStudent(e) {
-        e.preventDefault();
-        const form = e.target;
-        const isAddForm = form.id === "addStudentFormElement";
-        const groupId = isAddForm ? "addGroup" : "editGroup";
-        const nameId = isAddForm ? "addName" : "editName";
-        const genderId = isAddForm ? "addGender" : "editGender";
-        const birthdayId = isAddForm ? "addBirthday" : "editBirthday";
-
-        const studentData = {
-            group: form.querySelector("#" + groupId).value,
-            name: form.querySelector("#" + nameId).value,
-            gender: form.querySelector("#" + genderId).value,
-            birthday: formatDate(form.querySelector("#" + birthdayId).value),
-            status: "Active",
-        };
-
-        if (Object.values(studentData).every(function (val) { return val; })) {
-            if (editingStudentRow !== null) {
-                students[editingStudentRow] = studentData;
-                editingStudentRow = null;
-            } else {
-                students.push(studentData);
-            }
-            form.reset();
-            elements.addStudentForm.classList.add("hidden");
-            elements.editStudentForm.classList.add("hidden");
-            renderTable();
-        } else {
-            alert("Please fill all fields");
-        }
-    }
-
-    // Події для кнопки "Add Student"
     elements.addStudentBtn.addEventListener("click", function () {
-        if (!elements.deleteConfirmation.classList.contains("hidden")) {
-            return;
-        }
-        elements.addStudentForm.classList.remove("hidden");
+        elements.formTitle.textContent = "Add New Student";
+        elements.submitBtn.textContent = "Add Student";
         elements.addStudentFormElement.reset();
+        elements.addStudentForm.querySelector("#studentId").value = "";
+        elements.addStudentForm.classList.remove("hidden");
+        document.body.classList.add("modal-open");
         editingStudentRow = null;
-        elements.mainCheckbox.checked = false;
-        const studentCheckboxes = document.querySelectorAll("td input[type=\"checkbox\"]");
-        studentCheckboxes.forEach(function (cb) {
-            cb.checked = false;
-        });
     });
 
-    // Видалення студента(ів)
     document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
         const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
         if (elements.mainCheckbox.checked) {
             students = [];
             currentPage = 1;
         } else if (checkedBoxes.length > 0) {
-            const indicesToDelete = Array.from(checkedBoxes)
-                .map(function (cb) { return parseInt(cb.dataset.index, 10); })
-                .sort(function (a, b) { return b - a; });
-
-            indicesToDelete.forEach(function (index) {
-                students.splice(index, 1);
-            });
-
-            const maxPage = Math.ceil(students.length / studentsPerPage);
-            if (currentPage > maxPage && maxPage > 0) {
-                currentPage = maxPage;
-            } else if (students.length === 0) {
-                currentPage = 1;
-            }
+            const indicesToDelete = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.index, 10)).sort((a, b) => b - a);
+            indicesToDelete.forEach(index => students.splice(index, 1));
+            currentPage = Math.min(currentPage, Math.ceil(students.length / studentsPerPage) || 1);
         } else if (studentToDelete !== null) {
             students.splice(studentToDelete, 1);
             studentToDelete = null;
-
-            const maxPage = Math.ceil(students.length / studentsPerPage);
-            if (currentPage > maxPage && maxPage > 0) {
-                currentPage = maxPage;
-            } else if (students.length === 0) {
-                currentPage = 1;
-            }
+            currentPage = Math.min(currentPage, Math.ceil(students.length / studentsPerPage) || 1);
         }
         elements.deleteConfirmation.classList.add("hidden");
         renderTable();
     });
 
-    // Закриття модального вікна через хрестик
-    document.querySelectorAll(".fa-xmark.closeIcon").forEach(function (icon) {
+    document.querySelectorAll(".fa-xmark.closeIcon").forEach(icon => {
         icon.addEventListener("click", function () {
             icon.closest("div").classList.add("hidden");
+            document.body.classList.remove("modal-open");
             studentToDelete = null;
             elements.mainCheckbox.checked = false;
-            const studentCheckboxes = document.querySelectorAll("td input[type=\"checkbox\"]");
-            studentCheckboxes.forEach(function (cb) {
-                cb.checked = false;
-            });
+            document.querySelectorAll("td input[type=\"checkbox\"]").forEach(cb => cb.checked = false);
         });
     });
 
     document.getElementById("cancelDeleteBtn").addEventListener("click", function () {
         elements.deleteConfirmation.classList.add("hidden");
         studentToDelete = null;
-        elements.mainCheckbox.checked = false;
-        const studentCheckboxes = document.querySelectorAll("td input[type=\"checkbox\"]");
-        studentCheckboxes.forEach(function (cb) {
-            cb.checked = false;
-        });
     });
 
     elements.addStudentFormElement.addEventListener("submit", addStudent);
-    elements.editStudentFormElement.addEventListener("submit", addStudent);
 
-    document.querySelectorAll("#addOkBtn, #editOkBtn").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            btn.closest("div").classList.add("hidden");
-            const form = btn.closest("form");
-            if (form) form.reset();
-        });
+    document.getElementById("addOkBtn").addEventListener("click", function () {
+        elements.addStudentForm.classList.add("hidden");
+        document.body.classList.remove("modal-open");
+        elements.addStudentFormElement.reset();
     });
 
-    // Пагінація
     document.getElementById("prev-page").addEventListener("click", function () {
         if (currentPage > 1) {
             currentPage--;
@@ -315,7 +275,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Повідомлення
     elements.bellIcon.addEventListener("click", function () {
         elements.notificationDropdown.classList.toggle("show");
         elements.indicator.classList.remove("show");
@@ -331,10 +290,9 @@ document.addEventListener("DOMContentLoaded", function () {
         elements.indicator.classList.toggle("show");
         elements.notificationDropdown.classList.toggle("show");
         elements.bellIcon.classList.add("bell-animation");
-        setTimeout(function () { elements.bellIcon.classList.remove("bell-animation"); }, 500);
+        setTimeout(() => elements.bellIcon.classList.remove("bell-animation"), 500);
     });
 
-    // Профіль
     elements.profileContainer.addEventListener("click", function (e) {
         e.stopPropagation();
         elements.dropdownMenu.style.display = elements.dropdownMenu.style.display === "block" ? "none" : "block";
@@ -347,9 +305,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     elements.logoutButton.addEventListener("click", function () {
-        alert("You logouted!");
+        alert("You logged out!");
     });
 
-    // Ініціалізація
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/sw.js").then(
+                registration => console.log("Service Worker registered:", registration),
+                error => console.log("Service Worker registration failed:", error)
+            );
+        });
+    }
+
     renderTable();
 });

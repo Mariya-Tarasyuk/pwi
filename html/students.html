@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="manifest" href="/manifest.json">
     <script src="/js/script.js" defer></script>
     <script src="https://kit.fontawesome.com/e752585ce8.js" crossorigin="anonymous"></script>
 </head>
@@ -12,11 +13,9 @@
     <header class="header">
         <h1 class="CMS"><a href="students.html">CMS</a></h1>
         <div class="header-icons">
-            <!-- Контейнер для вікна сповіщень -->
             <div class="notification-container">
                 <i class="fa-solid fa-bell notification-bell"></i>
                 <span class="notification-indicator hidden"></span>
-                <!-- Випадаюче вікно -->
                 <div class="notification-dropdown">
                     <div class="notification-item">
                         <img src="/images/avatar-3.jpg" alt="User Avatar 1">
@@ -34,13 +33,11 @@
                     </div>
                 </div>
             </div>
-            <!-- Контейнер для вікна профілю -->
             <div class="profile-container">
                 <div class="profile-info">
                     <img src="/images/avatar-1.jpg" alt="Profile Avatar" class="profile-avatar">
                     <p>Mariya Tarasyuk</p>
                 </div>
-                <!-- Випадаюче вікно -->
                 <div class="dropdown-menu">
                     <a href="#">Profile</a>
                     <a href="#" id="logout">Log out</a>
@@ -50,7 +47,6 @@
     </header>
 
     <section class="main-body">
-        <!-- Бічна панель -->
         <aside>
             <nav>
                 <ul>
@@ -61,14 +57,12 @@
             </nav>
         </aside>
 
-        <!-- Основний вміст -->
         <div class="content">
             <div class="students-header">
                 <h2>Students</h2>
                 <button class="add-student-btn">Add Student</button>
             </div>
 
-            <!-- Таблиця студентів -->
             <table id="studentsTable">
                 <thead>
                     <tr>
@@ -87,37 +81,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Приклад рядка -->
-                    <tr>
-                        <td>
-                            <input type="checkbox" id="studentCheckbox1" aria-label="select student">
-                        </td>
-                        <td>KN-21</td>
-                        <td data-initials="JD">John Doe</td>
-                        <td>M</td>
-                        <td>11.05.2004</td>
-                        <td><span style="color: green;">●</span></td>
-                        <td>
-                            <i class="fa-solid fa-pen"></i>
-                            <i class="fa-solid fa-xmark"></i>
-                        </td>
-                    </tr>
-                    <!-- Сюди динамічно додаватимуться інші студенти -->
+                    <!-- Динамічний вміст -->
                 </tbody>
             </table>
 
-            <!-- Пагінація -->
             <div class="pagination-container">
                 <button class="pagination-button" id="prev-page">Previous</button>
                 <button class="pagination-button" id="next-page">Next</button>
             </div>
 
-            <!-- Вікно додавання студента -->
             <div id="addStudentForm" class="hidden">
-                <h3>Add New Student
-                    <i id="closeAddBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i>
+                <h3 id="formTitle">Add New Student
                 </h3>
+                <i id="closeAddBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i>
                 <form id="addStudentFormElement">
+                    <input type="hidden" id="studentId">
                     <div>
                         <label for="addGroup">Group:</label>
                         <select id="addGroup" required>
@@ -126,11 +104,14 @@
                             <option value="KN-22">KN-22</option>
                             <option value="KN-23">KN-23</option>
                         </select>
-                       
                     </div>
                     <div>
-                        <label for="addName">Name:</label>
-                        <input type="text" id="addName" required>
+                        <label for="addFirstName">First Name:</label>
+                        <input type="text" id="addFirstName" required>
+                    </div>
+                    <div>
+                        <label for="addLastName">Last Name:</label>
+                        <input type="text" id="addLastName" required>
                     </div>
                     <div>
                         <label for="addGender">Gender:</label>
@@ -144,48 +125,12 @@
                         <label for="addBirthday">Birthday:</label>
                         <input type="date" id="addBirthday" required>
                     </div>
-                    <button type="submit" id="addSubmitBtn">Add Student</button>
+                    <button type="submit" id="submitBtn">Add Student</button>
                     <button type="button" id="addOkBtn">OK</button>
                 </form>
             </div>
+            <div class="modal-overlay"></div>
 
-            <!-- Вікно редагування студента -->
-            <div id="editStudentForm" class="hidden">
-                <h3>Edit Student
-                    <i id="closeEditBtn" class="fa-solid fa-xmark closeIcon" style="cursor: pointer; float: right;"></i>
-                </h3>
-                <form id="editStudentFormElement">
-                    <div>
-                        <label for="editGroup">Group:</label>
-                        <select id="editGroup" required>
-                            <option value="" disabled selected>Select group</option>
-                            <option value="KN-21">KN-21</option>
-                            <option value="KN-22">KN-22</option>
-                            <option value="KN-23">KN-23</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="editName">Name:</label>
-                        <input type="text" id="editName" required>
-                    </div>
-                    <div>
-                        <label for="editGender">Gender:</label>
-                        <select id="editGender" required>
-                            <option value="" disabled selected>Select gender</option>
-                            <option value="M">Male</option>
-                            <option value="F">Female</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="editBirthday">Birthday:</label>
-                        <input type="date" id="editBirthday" required>
-                    </div>
-                    <button type="submit" id="editSubmitBtn">Save Changes</button>
-                    <button type="button" id="editOkBtn">OK</button>
-                </form>
-            </div>
-
-            <!-- Вікно підтвердження видалення -->
             <div id="deleteConfirmation" class="hidden">
                 <h3>Are you sure you want to delete <span id="studentName"></span>?</h3>
                 <button type="button" id="cancelDeleteBtn">Cancel</button>
