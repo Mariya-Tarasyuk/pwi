@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
         deleteIcons.forEach(icon => {
             icon.addEventListener("click", function (e) {
                 const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
-                if (checkedBoxes.length === 0) {
+                if (checkedBoxes.length == 0) {
                     studentToDelete = parseInt(e.target.dataset.index, 10);
                     elements.studentName.textContent = students[studentToDelete].name;
                     elements.deleteConfirmation.classList.remove("hidden");

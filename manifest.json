@@ -1,7 +1,7 @@
 {
     "name": "Student CMS",
     "short_name": "CMS",
-    "start_url": "/students.html",
+    "start_url": "/html/students.html",
     "display": "standalone",
     "background_color": "#fcf7ec",
     "theme_color": "#557c3f",
