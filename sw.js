@@ -1,5 +1,5 @@
 const CACHE_NAME = "student-cms-v1";
-const DATA_CACHE_NAME = "student-data-v1"; // Окремий кеш для даних
+const DATA_CACHE_NAME = "student-data-v1";
 const urlsToCache = [
     "/",
     "/html/students.html",
@@ -13,8 +13,7 @@ const urlsToCache = [
     "/images/icon-512.png",
     "/images/screenshot-desktop.png",
     "/images/screenshot-mobile.png",
-    "/manifest.json",
-    "/offline.html"
+    "/manifest.json"
 ];
 
 // Подія "install" для кешування статичних ресурсів
@@ -58,7 +57,7 @@ self.addEventListener("message", event => {
 self.addEventListener("fetch", event => {
     const requestUrl = new URL(event.request.url);
 
-    // Якщо запит до /api/students, повертаємо дані з кешу
+    // Якщо запит до /api/students
     if (requestUrl.pathname === "/api/students") {
         event.respondWith(
             caches.open(DATA_CACHE_NAME).then(cache => {
@@ -66,7 +65,12 @@ self.addEventListener("fetch", event => {
                     if (response) {
                         return response;
                     }
-                    // Якщо немає в кеші, повертаємо порожній масив
+                    // Якщо немає в кеші, повертаємо порожній масив JSON
+                    return new Response(JSON.stringify([]), {
+                        headers: { "Content-Type": "application/json" }
+                    });
+                }).catch(() => {
+                    // У разі помилки повертаємо порожній масив
                     return new Response(JSON.stringify([]), {
                         headers: { "Content-Type": "application/json" }
                     });
@@ -83,7 +87,15 @@ self.addEventListener("fetch", event => {
                 return response;
             }
             return fetch(event.request).catch(() => {
-                return caches.match("/offline.html");
+                // У офлайн-режимі повертаємо текстовий опис
+                return new Response(
+                    "<h1>You are offline</h1><p>Please connect to the internet to access this content.</p>",
+                    {
+                        status: 503,
+                        statusText: "Service Unavailable",
+                        headers: { "Content-Type": "text/html" }
+                    }
+                );
             });
         })
     );
