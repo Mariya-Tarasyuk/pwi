@@ -1,5 +1,5 @@
 /* eslint-env browser */
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     const elements = {
         mainCheckbox: document.querySelector("th input[type=\"checkbox\"]"),
         tableBody: document.querySelector("#studentsTable tbody"),
@@ -18,17 +18,54 @@ document.addEventListener("DOMContentLoaded", function () {
         submitBtn: document.getElementById("submitBtn"),
     };
 
-    let students = [
-        { id: 1, group: "KN-21", name: "John Smith", gender: "M", birthday: "11.05.2004", status: "Active" },
-        { id: 2, group: "KN-21", name: "Jane Doe", gender: "F", birthday: "22.04.2003", status: "Inactive" },
-        { id: 3, group: "KN-22", name: "Mark Spencer", gender: "M", birthday: "19.02.2002", status: "Active" },
-    ];
-
+    let students = [];
     const studentsPerPage = 10;
     let currentPage = 1;
     let studentToDelete = null;
     let editingStudentRow = null;
 
+    // Функція для завантаження даних із кешу або localStorage
+    async function loadStudents() {
+        try {
+            const response = await fetch("/api/students");
+            const cachedStudents = await response.json();
+            if (cachedStudents && cachedStudents.length > 0) {
+                students = cachedStudents;
+                saveStudents(); // Оновлюємо localStorage
+                return;
+            }
+        } catch (error) {
+            console.warn("Failed to load students from cache:", error);
+        }
+
+        // Якщо кеш порожній, завантажуємо з localStorage
+        students = JSON.parse(localStorage.getItem("students")) || [
+            { id: 1, group: "KN-21", name: "John Smith", gender: "M", birthday: "11.05.2004", status: "Active" },
+            { id: 2, group: "KN-21", name: "Jane Doe", gender: "F", birthday: "22.04.2003", status: "Inactive" },
+            { id: 3, group: "KN-22", name: "Mark Spencer", gender: "M", birthday: "19.02.2002", status: "Active" },
+        ];
+
+        // Оновлюємо кеш після завантаження
+        updateCache();
+    }
+
+    // Функція для збереження даних у localStorage
+    function saveStudents() {
+        localStorage.setItem("students", JSON.stringify(students));
+    }
+
+    // Функція для оновлення кешу
+    function updateCache() {
+        if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+            const message = {
+                type: "UPDATE_CACHE",
+                data: students
+            };
+            navigator.serviceWorker.controller.postMessage(message);
+        }
+    }
+
+    // Форматування дати
     const formatDate = (date) => {
         const d = new Date(date);
         return String(d.getDate()).padStart(2, "0") + "." +
@@ -36,6 +73,88 @@ document.addEventListener("DOMContentLoaded", function () {
                d.getFullYear();
     };
 
+    // Валідація форми
+    function validateForm(form) {
+        const firstName = form.querySelector("#addFirstName").value;
+        const lastName = form.querySelector("#addLastName").value;
+        const birthday = form.querySelector("#addBirthday").value;
+
+        const nameRegex = /^[A-Za-zА-Яа-я]{2,}$/;
+        const altNameRegex = /^[A-Za-zА-Яа-я\s-]{2,}$/;
+        const useAltValidation = true;
+        const regexToUse = useAltValidation ? altNameRegex : nameRegex;
+
+        let isValid = true;
+
+        if (!regexToUse.test(firstName)) {
+            form.querySelector("#addFirstName").classList.add("error");
+            form.querySelector("#addFirstName").nextElementSibling?.remove();
+            form.querySelector("#addFirstName").insertAdjacentHTML("afterend", "<span class='error-msg'>Invalid first name</span>");
+            isValid = false;
+        } else {
+            form.querySelector("#addFirstName").classList.remove("error");
+            form.querySelector("#addFirstName").nextElementSibling?.remove();
+        }
+
+        if (!regexToUse.test(lastName)) {
+            form.querySelector("#addLastName").classList.add("error");
+            form.querySelector("#addLastName").nextElementSibling?.remove();
+            form.querySelector("#addLastName").insertAdjacentHTML("afterend", "<span class='error-msg'>Invalid last name</span>");
+            isValid = false;
+        } else {
+            form.querySelector("#addLastName").classList.remove("error");
+            form.querySelector("#addLastName").nextElementSibling?.remove();
+        }
+
+        const today = new Date();
+        const birthDate = new Date(birthday);
+        if (birthDate >= today) {
+            form.querySelector("#addBirthday").classList.add("error");
+            form.querySelector("#addBirthday").nextElementSibling?.remove();
+            form.querySelector("#addBirthday").insertAdjacentHTML("afterend", "<span class='error-msg'>Date must be in the past</span>");
+            isValid = false;
+        } else {
+            form.querySelector("#addBirthday").classList.remove("error");
+            form.querySelector("#addBirthday").nextElementSibling?.remove();
+        }
+
+        return isValid;
+    }
+
+    // Додавання або редагування студента
+    function addStudent(e) {
+        e.preventDefault();
+        const form = e.target;
+        if (!validateForm(form)) return;
+
+        const firstName = form.querySelector("#addFirstName").value;
+        const lastName = form.querySelector("#addLastName").value;
+        const studentData = {
+            id: form.querySelector("#studentId").value || Date.now(),
+            group: form.querySelector("#addGroup").value,
+            name: `${firstName} ${lastName}`,
+            gender: form.querySelector("#addGender").value,
+            birthday: formatDate(form.querySelector("#addBirthday").value),
+            status: "Active",
+        };
+
+        if (Object.values(studentData).every(val => val)) {
+            if (editingStudentRow !== null) {
+                students[editingStudentRow] = studentData;
+                editingStudentRow = null;
+            } else {
+                students.push(studentData);
+            }
+            saveStudents();
+            updateCache();
+            form.reset();
+            elements.addStudentForm.classList.add("hidden");
+            document.body.classList.remove("modal-open");
+            renderTable();
+        }
+    }
+
+    // Рендеринг таблиці
     function renderTable() {
         elements.tableBody.innerHTML = "";
         const start = (currentPage - 1) * studentsPerPage;
@@ -62,89 +181,13 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCheckboxListeners();
     }
 
+    // Оновлення пагінації
     function updatePagination() {
         document.getElementById("prev-page").disabled = currentPage === 1;
-        document.getElementById("next-page").disabled = currentPage === Math.ceil(students.length / studentsPerPage);
+        document.getElementById("next-page").disabled = currentPage === Math.ceil(students.length / studentsPerPage) || students.length === 0;
     }
 
-    function validateForm(form) {
-        const firstName = form.querySelector("#addFirstName").value;
-        const lastName = form.querySelector("#addLastName").value;
-        const birthday = form.querySelector("#addBirthday").value;
-    
-        const nameRegex = /^[A-Za-zА-Яа-я]{2,}$/; // Тільки літери
-        const altNameRegex = /^[A-Za-zА-Яа-я\s-]{2,}$/; // Дозволяємо пробіли та дефіси
-        const useAltValidation = true; // Використовуємо альтернативну валідацію
-    
-        let isValid = true;
-        const regexToUse = useAltValidation ? altNameRegex : nameRegex;
-    
-        if (!regexToUse.test(firstName)) {
-            form.querySelector("#addFirstName").classList.add("error");
-            form.querySelector("#addFirstName").nextElementSibling?.remove();
-            form.querySelector("#addFirstName").insertAdjacentHTML("afterend", "<span class='error-msg'>Invalid first name</span>");
-            isValid = false;
-        } else {
-            form.querySelector("#addFirstName").classList.remove("error");
-            form.querySelector("#addFirstName").nextElementSibling?.remove();
-        }
-    
-        if (!regexToUse.test(lastName)) {
-            form.querySelector("#addLastName").classList.add("error");
-            form.querySelector("#addLastName").nextElementSibling?.remove();
-            form.querySelector("#addLastName").insertAdjacentHTML("afterend", "<span class='error-msg'>Invalid last name</span>");
-            isValid = false;
-        } else {
-            form.querySelector("#addLastName").classList.remove("error");
-            form.querySelector("#addLastName").nextElementSibling?.remove();
-        }
-    
-        const today = new Date();
-        const birthDate = new Date(birthday);
-        if (birthDate >= today) {
-            form.querySelector("#addBirthday").classList.add("error");
-            form.querySelector("#addBirthday").nextElementSibling?.remove();
-            form.querySelector("#addBirthday").insertAdjacentHTML("afterend", "<span class='error-msg'>Date must be in the past</span>");
-            isValid = false;
-        } else {
-            form.querySelector("#addBirthday").classList.remove("error");
-            form.querySelector("#addBirthday").nextElementSibling?.remove();
-        }
-    
-        return isValid;
-    }
-
-    function addStudent(e) {
-        e.preventDefault();
-        const form = e.target;
-        if (!validateForm(form)) return;
-
-        const firstName = form.querySelector("#addFirstName").value;
-        const lastName = form.querySelector("#addLastName").value;
-        const studentData = {
-            id: form.querySelector("#studentId").value || Date.now(),
-            group: form.querySelector("#addGroup").value,
-            name: `${firstName} ${lastName}`,
-            gender: form.querySelector("#addGender").value,
-            birthday: formatDate(form.querySelector("#addBirthday").value),
-            status: "Active",
-        };
-
-        if (Object.values(studentData).every(val => val)) {
-            if (editingStudentRow !== null) {
-                students[editingStudentRow] = studentData;
-                editingStudentRow = null;
-            } else {
-                students.push(studentData);
-            }
-            console.log(JSON.stringify(studentData, null, 2));
-            form.reset();
-            elements.addStudentForm.classList.add("hidden");
-            document.body.classList.remove("modal-open");
-            renderTable();
-        }
-    }
-
+    // Оновлення слухачів подій для чекбоксів і іконок
     function updateCheckboxListeners() {
         const studentCheckboxes = document.querySelectorAll("td input[type=\"checkbox\"]");
         const editIcons = document.querySelectorAll(".fa-pen");
@@ -195,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
         deleteIcons.forEach(icon => {
             icon.addEventListener("click", function (e) {
                 const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
-                if (checkedBoxes.length == 0) {
+                if (checkedBoxes.length === 0) {
                     studentToDelete = parseInt(e.target.dataset.index, 10);
                     elements.studentName.textContent = students[studentToDelete].name;
                     elements.deleteConfirmation.classList.remove("hidden");
@@ -210,6 +253,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Ініціалізація: завантажуємо студентів і рендеримо таблицю
+    await loadStudents();
+    renderTable();
+
+    // Слухачі подій
     elements.addStudentBtn.addEventListener("click", function () {
         elements.formTitle.textContent = "Add New Student";
         elements.submitBtn.textContent = "Add Student";
@@ -235,16 +283,22 @@ document.addEventListener("DOMContentLoaded", function () {
             currentPage = Math.min(currentPage, Math.ceil(students.length / studentsPerPage) || 1);
         }
         elements.deleteConfirmation.classList.add("hidden");
+        saveStudents();
+        updateCache();
         renderTable();
     });
 
     document.querySelectorAll(".fa-xmark.closeIcon").forEach(icon => {
         icon.addEventListener("click", function () {
-            icon.closest("div").classList.add("hidden");
+            const modal = icon.closest("div");
+            modal.classList.add("hidden");
             document.body.classList.remove("modal-open");
             studentToDelete = null;
             elements.mainCheckbox.checked = false;
             document.querySelectorAll("td input[type=\"checkbox\"]").forEach(cb => cb.checked = false);
+            if (modal === elements.addStudentForm) {
+                elements.addStudentFormElement.reset();
+            }
         });
     });
 
@@ -316,6 +370,4 @@ document.addEventListener("DOMContentLoaded", function () {
             );
         });
     }
-
-    renderTable();
 });
