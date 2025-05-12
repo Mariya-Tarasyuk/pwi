@@ -15,32 +15,25 @@
         <div class="header-icons">
             <div class="notification-container">
                 <i class="fa-solid fa-bell notification-bell"></i>
-                <span class="notification-indicator hidden"></span>
+                <span class="notification-indicator show"></span>
                 <div class="notification-dropdown">
-                    <div class="notification-item">
-                        <img src="/images/avatar-3.jpg" alt="User Avatar 1">
-                        <div class="notification-content">
-                            <div class="name">Ім'я Користувача</div>
-                            <div class="message">Це ваше нове повідомлення!</div>
-                        </div>
-                    </div>
-                    <div class="notification-item">
-                        <img src="/images/avatar-2.jpg" alt="User Avatar 2">
-                        <div class="notification-content">
-                            <div class="name">Олександр</div>
-                            <div class="message">Ваш запит підтверджено.</div>
-                        </div>
-                    </div>
+                    <p>No new notifications</p>
                 </div>
             </div>
             <div class="profile-container">
                 <div class="profile-info">
-                    <img src="/images/avatar-1.jpg" alt="Profile Avatar" class="profile-avatar">
-                    <p>Mariya Tarasyuk</p>
+                    <img src="/images/avatar-1.jpg" alt="Profile" class="profile-avatar">
+                    <p>admin</p>
                 </div>
                 <div class="dropdown-menu">
-                    <a href="#">Profile</a>
-                    <a href="#" id="logout">Log out</a>
+                    <div class="profile-info">
+                        <img src="/images/avatar-1.jpg" alt="Profile">
+                        <p>admin</p>
+                    </div>
+                    <ul>
+                        <li>Profile</li>
+                        <li id="logout">Log out</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -136,6 +129,23 @@
                 <button type="button" id="cancelDeleteBtn">Cancel</button>
                 <button type="button" id="confirmDeleteBtn">OK</button>
                 <i class="fa-solid fa-xmark closeIcon" id="closeDeleteBtn"></i>
+            </div>
+            <div id="loginModal" class="modal hidden">
+                <div class="modal-content">
+                    <span id="closeLoginBtn" class="closeIcon fa-solid fa-xmark"></span>
+                    <h2>Увійти</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">Ім'я користувача:</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Пароль:</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit">Увійти</button>
+                    </form>
+                </div>
             </div>
         </div>
     </section>

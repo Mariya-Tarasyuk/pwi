@@ -24,62 +24,62 @@ const elements = {
     logoutButton: null,
     formTitle: null,
     submitBtn: null,
+    loginBtn: null,
+    loginModal: null,
+    loginForm: null,
+    registerModal: null,
+    registerForm: null,
+    studentsTable: null,
 };
 
-// Функція для збереження даних у localStorage
-function saveStudents() {
-    console.log("Saving students to localStorage:", students);
-    localStorage.setItem("students", JSON.stringify(students));
-}
-
-// Функція для оновлення кешу
-function updateCache() {
-    console.log("Updating cache with students:", students);
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-        const message = {
-            type: "UPDATE_CACHE",
-            data: students
-        };
-        navigator.serviceWorker.controller.postMessage(message);
-    }
-}
-
-// Функція для завантаження даних із кешу або localStorage
+// Функція для завантаження даних із сервера
 async function loadStudents() {
     console.log("Starting loadStudents...");
-    console.log("Is saveStudents defined?", typeof saveStudents === "function");
     try {
-        const response = await fetch("/api/students");
+        const response = await fetch("/api/students.php", { credentials: 'include' });
+        console.log("Server response status:", response.status);
+        console.log("Server response headers:", response.headers);
         const contentType = response.headers.get("content-type");
-        if (response.ok && contentType && contentType.includes("application/json")) {
-            const cachedStudents = await response.json();
-            if (cachedStudents && cachedStudents.length > 0) {
-                students = cachedStudents;
-                if (typeof saveStudents === "function") {
-                    saveStudents();
-                } else {
-                    console.error("saveStudents is not defined in loadStudents!");
-                }
-                return;
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        if (contentType && contentType.includes("application/json")) {
+            const responseData = await response.json();
+            console.log("Received raw data:", responseData);
+            
+            // Обробляємо різні формати відповіді
+            let data;
+            if (Array.isArray(responseData)) {
+                data = responseData;
+            } else if (responseData && Array.isArray(responseData.data)) {
+                data = responseData.data;
+            } else {
+                throw new Error("Invalid data format received from server: Expected an array or object with 'data' array");
             }
+            
+            students = data.map(student => {
+                console.log("Processing student:", student);
+                return {
+                    id: student.id,
+                    group: student.group_name,
+                    name: `${student.first_name} ${student.last_name}`,
+                    gender: student.gender,
+                    birthday: student.birthday ? student.birthday.split('-').reverse().join('.') : 'N/A',
+                    status: student.status
+                };
+            });
+            console.log("Processed students:", students);
         } else {
-            console.warn("Received non-JSON response from /api/students, falling back to localStorage");
+            const text = await response.text();
+            console.error("Non-JSON response:", text);
+            throw new Error("Received non-JSON response from /api/students.php");
         }
     } catch (error) {
-        console.warn("Failed to load students from cache:", error);
+        console.error("Failed to load students from server:", error);
+        students = [];
     }
-
-    students = JSON.parse(localStorage.getItem("students")) || [
-        { id: 1, group: "KN-21", name: "John Smith", gender: "M", birthday: "11.05.2004", status: "Active" },
-        { id: 2, group: "KN-21", name: "Jane Doe", gender: "F", birthday: "22.04.2003", status: "Inactive" },
-        { id: 3, group: "KN-22", name: "Mark Spencer", gender: "M", birthday: "19.02.2002", status: "Active" },
-    ];
-
-    if (typeof updateCache === "function") {
-        updateCache();
-    } else {
-        console.error("updateCache is not defined in loadStudents!");
-    }
+    // Завжди викликаємо renderTable після спроби завантаження
+    renderTable();
 }
 
 // Форматування дати для відображення (DD.MM.YYYY)
@@ -96,25 +96,76 @@ const convertToInputDateFormat = (dateStr) => {
     return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 };
 
+// Функція для капіталізації першої літери
+const capitalizeFirstLetter = (str) => {
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 // Валідація форми
 function validateForm(form) {
-    const firstName = form.querySelector("#addFirstName").value;
-    const lastName = form.querySelector("#addLastName").value;
+    const firstName = form.querySelector("#addFirstName").value.trim();
+    const lastName = form.querySelector("#addLastName").value.trim();
     const birthday = form.querySelector("#addBirthday").value;
 
     const nameRegex = /^[A-Za-zА-Яа-я]{2,}$/;
     const altNameRegex = /^[A-Za-zА-Яа-я\s-]{2,}$/;
     const useAltValidation = true;
     const regexToUse = useAltValidation ? altNameRegex : nameRegex;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     let isValid = true;
 
-    if (!regexToUse.test(firstName)) {
+    if (firstName.toLowerCase().includes("select") || lastName.toLowerCase().includes("select")) {
+        alert("Попередження: Слово 'select' не дозволяється у імені чи прізвищі.");
+        form.querySelector("#addFirstName").classList.add("error");
+        form.querySelector("#addLastName").classList.add("error");
+        isValid = false;
+    }
+
+    if (firstName === "@") {
         form.querySelector("#addFirstName").classList.add("error");
         form.querySelector("#addFirstName").nextElementSibling?.remove();
-        form.querySelector("#addFirstName").insertAdjacentHTML("afterend", "<span class='error-msg'>Invalid first name</span>");
+        form.querySelector("#addFirstName").insertAdjacentHTML("afterend", "<span class='error-msg'>Ім'я не може бути лише символом @</span>");
         isValid = false;
-    } else {
+    }
+
+    const atSymbolCount = (firstName.match(/@/g) || []).length;
+    if (atSymbolCount > 1) {
+        form.querySelector("#addFirstName").classList.add("error");
+        form.querySelector("#addFirstName").nextElementSibling?.remove();
+        form.querySelector("#addFirstName").insertAdjacentHTML("afterend", "<span class='error-msg'>Дозволяється лише один символ @ у форматі email lpnu.ua</span>");
+        isValid = false;
+    }
+
+    if (emailRegex.test(firstName)) {
+        const nameBeforeAt = firstName.split("@")[0];
+        if (!altNameRegex.test(nameBeforeAt)) {
+            form.querySelector("#addFirstName").classList.add("error");
+            form.querySelector("#addFirstName").nextElementSibling?.remove();
+            form.querySelector("#addFirstName").insertAdjacentHTML("afterend", "<span class='error-msg'>Частина перед @ повинна бути ім'ям</span>");
+            isValid = false;
+        }
+
+        if (firstName.toLowerCase().endsWith("@lpnu.ua")) {
+            if (isValid) {
+                alert("Привіт, політехніку!");
+            }
+        } else {
+            alert("Введіть ім'я, а не email!");
+            form.querySelector("#addFirstName").classList.add("error");
+            form.querySelector("#addFirstName").nextElementSibling?.remove();
+            form.querySelector("#addFirstName").insertAdjacentHTML("afterend", "<span class='error-msg'>Введіть ім'я, а не email</span>");
+            isValid = false;
+        }
+    }
+
+    if (!regexToUse.test(firstName) && isValid && !firstName.toLowerCase().endsWith("@lpnu.ua")) {
+        form.querySelector("#addFirstName").classList.add("error");
+        form.querySelector("#addFirstName").nextElementSibling?.remove();
+        form.querySelector("#addFirstName").insertAdjacentHTML("afterend", "<span class='error-msg'>Невірне ім'я</span>");
+        isValid = false;
+    } else if (isValid) {
         form.querySelector("#addFirstName").classList.remove("error");
         form.querySelector("#addFirstName").nextElementSibling?.remove();
     }
@@ -122,7 +173,7 @@ function validateForm(form) {
     if (!regexToUse.test(lastName)) {
         form.querySelector("#addLastName").classList.add("error");
         form.querySelector("#addLastName").nextElementSibling?.remove();
-        form.querySelector("#addLastName").insertAdjacentHTML("afterend", "<span class='error-msg'>Invalid last name</span>");
+        form.querySelector("#addLastName").insertAdjacentHTML("afterend", "<span class='error-msg'>Невірне прізвище</span>");
         isValid = false;
     } else {
         form.querySelector("#addLastName").classList.remove("error");
@@ -134,7 +185,7 @@ function validateForm(form) {
     if (!birthday || birthDate >= today) {
         form.querySelector("#addBirthday").classList.add("error");
         form.querySelector("#addBirthday").nextElementSibling?.remove();
-        form.querySelector("#addBirthday").insertAdjacentHTML("afterend", "<span class='error-msg'>Date must be in the past</span>");
+        form.querySelector("#addBirthday").insertAdjacentHTML("afterend", "<span class='error-msg'>Дата має бути в минулому</span>");
         isValid = false;
     } else {
         form.querySelector("#addBirthday").classList.remove("error");
@@ -144,8 +195,18 @@ function validateForm(form) {
     return isValid;
 }
 
+// Перевірка на дублювання студента
+function checkForDuplicateStudent(firstName, lastName, birthday) {
+    const formattedBirthday = formatDate(birthday);
+    const fullName = `${firstName} ${lastName}`;
+    return students.some(student => 
+        student.name.toLowerCase() === fullName.toLowerCase() &&
+        student.birthday === formattedBirthday
+    );
+}
+
 // Додавання або редагування студента
-function addStudent(e) {
+async function addStudent(e) {
     e.preventDefault();
     const form = e.target;
     if (!validateForm(form)) {
@@ -153,89 +214,185 @@ function addStudent(e) {
         return;
     }
 
-    const firstName = form.querySelector("#addFirstName").value;
-    const lastName = form.querySelector("#addLastName").value;
+    const firstName = capitalizeFirstLetter(form.querySelector("#addFirstName").value);
+    const lastName = capitalizeFirstLetter(form.querySelector("#addLastName").value);
+    const birthday = form.querySelector("#addBirthday").value;
+
+    // Перевірка на дублювання (тільки при додаванні, а не при редагуванні)
+    if (editingStudentRow === null) {
+        const isDuplicate = checkForDuplicateStudent(firstName, lastName, birthday);
+        if (isDuplicate) {
+            alert("Студент з таким ім'ям, прізвищем та датою народження вже існує!");
+            return;
+        }
+    }
+
     const studentData = {
         id: form.querySelector("#studentId").value || Date.now(),
         group: form.querySelector("#addGroup").value,
+        first_name: firstName,
+        last_name: lastName,
         name: `${firstName} ${lastName}`,
         gender: form.querySelector("#addGender").value,
-        birthday: formatDate(form.querySelector("#addBirthday").value),
+        birthday: birthday,
         status: "Active",
     };
 
     console.log("Adding/Editing student:", studentData);
 
-    if (Object.values(studentData).every(val => val)) {
+    try {
+        let response;
         if (editingStudentRow !== null) {
-            console.log("Editing student at index:", editingStudentRow);
-            students[editingStudentRow] = studentData;
+            response = await fetch(`/api/students.php?id=${studentData.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(studentData),
+                credentials: 'include'
+            });
+            console.log("Edit response:", response);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const updatedStudent = await response.json();
+            students[editingStudentRow] = {
+                ...studentData,
+                birthday: formatDate(studentData.birthday)
+            };
             editingStudentRow = null;
         } else {
-            console.log("Adding new student");
-            students.push(studentData);
-        }
-        if (typeof saveStudents === "function") {
-            saveStudents();
-        } else {
-            console.error("saveStudents is not defined in addStudent!");
-        }
-        if (typeof updateCache === "function") {
-            updateCache();
-        } else {
-            console.error("updateCache is not defined in addStudent!");
+            response = await fetch('/api/students.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(studentData),
+                credentials: 'include'
+            });
+            console.log("Add response:", response);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const newStudent = await response.json();
+            students.push({
+                ...newStudent,
+                birthday: formatDate(newStudent.birthday)
+            });
         }
         form.reset();
-        elements.addStudentForm.classList.add("hidden");
-        document.body.classList.remove("modal-open");
-        renderTable();
-    } else {
-        console.log("Some fields are empty or invalid:", studentData);
+        closeModal(elements.addStudentForm);
+        await loadStudents();
+    } catch (error) {
+        console.error("Error saving student:", error);
+        alert("Не вдалося зберегти студента. Перевірте консоль для деталей.");
     }
 }
 
 // Рендеринг таблиці
 function renderTable() {
+    if (!elements.tableBody) {
+        console.error("Table body element not found");
+        return;
+    }
+    console.log("Rendering table with students:", students);
     elements.tableBody.innerHTML = "";
     const start = (currentPage - 1) * studentsPerPage;
-    const end = Math.min(start + studentsPerPage, students.length);
+    const end = start + studentsPerPage;
+    const paginatedStudents = students.slice(start, end);
+    console.log("Paginated students:", paginatedStudents);
 
-    students.slice(start, end).forEach((student, index) => {
-        const globalIndex = start + index;
+    if (paginatedStudents.length === 0) {
+        console.log("No students to display on this page");
+        elements.tableBody.innerHTML = `<tr><td colspan="7">No students found</td></tr>`;
+        updatePagination();
+        return;
+    }
+
+    paginatedStudents.forEach((student, index) => {
         const row = document.createElement("tr");
-        const initials = student.name.split(" ").map(n => n[0] + ".").join(" ");
-        row.innerHTML = [
-            "<td><input type=\"checkbox\" aria-label=\"select student\" data-index=\"" + globalIndex + "\"></td>",
-            "<td data-label=\"Group\">" + student.group + "</td>",
-            "<td data-label=\"Name\" data-initials=\"" + initials + "\">" + student.name + "</td>",
-            "<td data-label=\"Gender\">" + student.gender + "</td>",
-            "<td data-label=\"Birthday\">" + student.birthday + "</td>",
-            "<td data-label=\"Status\"><i class=\"fa-solid fa-circle\" style=\"color: " + (student.status === "Active" ? "green" : "gray") + ";\"></i></td>",
-            "<td data-label=\"Options\">",
-            "<i class=\"fa-solid fa-pen\" data-index=\"" + globalIndex + "\"></i>",
-            "<i class=\"fa-solid fa-xmark\" data-index=\"" + globalIndex + "\"></i>",
-            "</td>",
-        ].join("");
+        row.innerHTML = `
+            <td><input type="checkbox" data-index="${start + index}" data-id="${student.id}"></td>
+            <td data-label="Group">${student.group || 'N/A'}</td>
+            <td data-label="Name" data-initials="${student.name.split(' ').map(n => n[0]).join('')}">${student.name}</td>
+            <td data-label="Gender">${student.gender || 'N/A'}</td>
+            <td data-label="Birthday">${student.birthday || 'N/A'}</td>
+            <td data-label="Status">${student.status || 'N/A'}</td>
+            <td data-label="Options">
+                <i class="fa-solid fa-pen edit-icon" data-index="${start + index}" data-id="${student.id}"></i>
+                <i class="fa-solid fa-xmark delete-icon" data-index="${start + index}" data-id="${student.id}"></i>
+            </td>
+        `;
         elements.tableBody.appendChild(row);
     });
-    updatePagination();
+
     updateCheckboxListeners();
+    updatePagination();
 }
 
 // Оновлення пагінації
 function updatePagination() {
-    document.getElementById("prev-page").disabled = currentPage === 1;
-    document.getElementById("next-page").disabled = currentPage === Math.ceil(students.length / studentsPerPage) || students.length === 0;
+    const prevPageBtn = document.getElementById("prev-page");
+    const nextPageBtn = document.getElementById("next-page");
+    if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+    if (nextPageBtn) nextPageBtn.disabled = currentPage === Math.ceil(students.length / studentsPerPage) || students.length === 0;
 }
 
-// Оновлення слухачів подій для чекбоксів і іконок
+// Обробка редагування
+function handleEditIconClick(e) {
+    const index = parseInt(e.target.dataset.index, 10);
+    editingStudentRow = index;
+    const student = students[index];
+    const [firstName, lastName] = student.name.split(" ");
+    elements.formTitle.textContent = "Редагувати студента";
+    elements.submitBtn.textContent = "Зберегти зміни";
+    elements.addStudentForm.querySelector("#studentId").value = student.id;
+    elements.addStudentForm.querySelector("#addGroup").value = student.group;
+    elements.addStudentForm.querySelector("#addFirstName").value = firstName;
+    elements.addStudentForm.querySelector("#addLastName").value = lastName || "";
+    elements.addStudentForm.querySelector("#addGender").value = student.gender;
+    elements.addStudentForm.querySelector("#addBirthday").value = convertToInputDateFormat(student.birthday);
+    elements.addStudentForm.classList.remove("hidden");
+    elements.addStudentForm.style.display = 'block';
+    elements.addStudentForm.style.zIndex = '1000';
+    document.body.classList.add("modal-open");
+}
+
+// Обробка видалення
+async function handleDeleteIconClick(e) {
+    if (!elements.deleteConfirmation.classList.contains("hidden")) {
+        return;
+    }
+
+    const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
+    if (checkedBoxes.length === 0) {
+        studentToDelete = parseInt(e.target.dataset.index, 10);
+        elements.studentName.textContent = students[studentToDelete].name;
+        elements.deleteConfirmation.classList.remove("hidden");
+        elements.deleteConfirmation.style.display = 'block';
+        elements.deleteConfirmation.style.zIndex = '1000';
+        document.body.classList.add("modal-open");
+    } else if (elements.mainCheckbox.checked) {
+        elements.studentName.textContent = "всіх студентів";
+        elements.deleteConfirmation.classList.remove("hidden");
+        elements.deleteConfirmation.style.display = 'block';
+        elements.deleteConfirmation.style.zIndex = '1000';
+        document.body.classList.add("modal-open");
+    } else if (checkedBoxes.length > 0) {
+        elements.studentName.textContent = checkedBoxes.length + " студентів";
+        elements.deleteConfirmation.classList.remove("hidden");
+        elements.deleteConfirmation.style.display = 'block';
+        elements.deleteConfirmation.style.zIndex = '1000';
+        document.body.classList.add("modal-open");
+    }
+}
+
+// Оновлення слухачів подій для чекбоксів
 function updateCheckboxListeners() {
     const studentCheckboxes = document.querySelectorAll("td input[type=\"checkbox\"]");
-    const editIcons = document.querySelectorAll(".fa-pen");
-    const deleteIcons = document.querySelectorAll(".fa-xmark");
+    const editIcons = document.querySelectorAll(".edit-icon");
+    const deleteIcons = document.querySelectorAll(".delete-icon");
 
-    elements.mainCheckbox.removeEventListener("change", handleMainCheckboxChange);
-    elements.mainCheckbox.addEventListener("change", handleMainCheckboxChange);
+    if (elements.mainCheckbox) {
+        elements.mainCheckbox.removeEventListener("change", handleMainCheckboxChange);
+        elements.mainCheckbox.addEventListener("change", handleMainCheckboxChange);
+    }
 
     function handleMainCheckboxChange() {
         const isChecked = elements.mainCheckbox.checked;
@@ -265,52 +422,168 @@ function updateCheckboxListeners() {
         icon.addEventListener("click", handleEditIconClick);
     });
 
-    function handleEditIconClick() {
-        const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
-        if (checkedBoxes.length === 1) {
-            const index = parseInt(checkedBoxes[0].dataset.index, 10);
-            editingStudentRow = index;
-            const student = students[index];
-            const [firstName, lastName] = student.name.split(" ");
-            elements.formTitle.textContent = "Edit Student";
-            elements.submitBtn.textContent = "Save Changes";
-            elements.addStudentForm.querySelector("#studentId").value = student.id;
-            elements.addStudentForm.querySelector("#addGroup").value = student.group;
-            elements.addStudentForm.querySelector("#addFirstName").value = firstName;
-            elements.addStudentForm.querySelector("#addLastName").value = lastName || "";
-            elements.addStudentForm.querySelector("#addGender").value = student.gender;
-            elements.addStudentForm.querySelector("#addBirthday").value = convertToInputDateFormat(student.birthday);
-            elements.addStudentForm.classList.remove("hidden");
-            document.body.classList.add("modal-open");
-        }
-    }
-
     deleteIcons.forEach(icon => {
         icon.removeEventListener("click", handleDeleteIconClick);
         icon.addEventListener("click", handleDeleteIconClick);
     });
+}
 
-    function handleDeleteIconClick(e) {
-        if (!elements.deleteConfirmation.classList.contains("hidden")) {
-            return;
+// Перевірка автентифікації
+async function checkAuth() {
+    console.log('Перевірка автентифікації...');
+    try {
+        const response = await fetch('/api/auth.php?action=check', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
-        if (checkedBoxes.length === 0) {
-            studentToDelete = parseInt(e.target.dataset.index, 10);
-            elements.studentName.textContent = students[studentToDelete].name;
-            elements.deleteConfirmation.classList.remove("hidden");
-        } else if (elements.mainCheckbox.checked) {
-            elements.studentName.textContent = "all students";
-            elements.deleteConfirmation.classList.remove("hidden");
-        } else if (checkedBoxes.length > 0) {
-            elements.studentName.textContent = checkedBoxes.length + " students";
-            elements.deleteConfirmation.classList.remove("hidden");
+        
+        const result = await response.json();
+        console.log('Відповідь автентифікації:', result);
+        
+        if (result.success && result.username) {
+            console.log('Користувач автентифікований:', result.username);
+            showAuthenticatedUI(result.username);
+            await loadStudents();
+        } else {
+            console.log('Користувач не автентифікований');
+            showUnauthenticatedUI();
         }
+    } catch (error) {
+        console.error('Помилка перевірки автентифікації:', error);
+        showUnauthenticatedUI();
     }
 }
 
-// Ініціалізація елементів DOM після завантаження сторінки
+// Показ UI для автентифікованого користувача
+function showAuthenticatedUI(username) {
+    console.log('Показ UI для автентифікованого користувача:', username);
+    if (elements.loginBtn) {
+        console.log('Приховуємо кнопку "Увійти"');
+        elements.loginBtn.classList.add('hidden');
+        elements.loginBtn.style.display = 'none';
+        console.log('Кнопка "Увійти" прихована:', {
+            hasHiddenClass: elements.loginBtn.classList.contains('hidden'),
+            display: elements.loginBtn.style.display
+        });
+    }
+    const profileContainer = document.querySelector('.profile-container');
+    const notificationContainer = document.querySelector('.notification-container');
+    if (profileContainer) {
+        profileContainer.classList.remove('hidden');
+        profileContainer.style.display = 'flex'; // Забезпечуємо видимість
+        const profileAvatar = profileContainer.querySelector('.profile-avatar');
+        const profileInfo = profileContainer.querySelector('.profile-info p');
+        if (profileAvatar) {
+            profileAvatar.style.display = 'block'; // Явно показуємо фото
+            console.log('Profile avatar shown:', {
+                display: profileAvatar.style.display
+            });
+        }
+        if (profileInfo) {
+            profileInfo.textContent = username;
+            profileInfo.style.display = 'block'; // Явно показуємо ім’я
+            console.log('Profile info shown:', {
+                text: profileInfo.textContent,
+                display: profileInfo.style.display
+            });
+        }
+        console.log('Profile container shown:', {
+            hasHiddenClass: profileContainer.classList.contains('hidden'),
+            display: profileContainer.style.display
+        });
+    }
+    if (notificationContainer) {
+        notificationContainer.classList.remove('hidden');
+        notificationContainer.style.display = 'block';
+    }
+    if (elements.studentsTable) elements.studentsTable.classList.remove('hidden');
+    if (elements.addStudentBtn) elements.addStudentBtn.classList.remove('hidden');
+}
+
+// Показ UI для неавтентифікованого користувача
+function showUnauthenticatedUI() {
+    const headerIcons = document.querySelector('.header-icons');
+    if (headerIcons && !elements.loginBtn) {
+        elements.loginBtn = document.createElement('button');
+        elements.loginBtn.textContent = 'Увійти';
+        elements.loginBtn.className = 'login-btn';
+        elements.loginBtn.style.display = 'inline-block';
+        elements.loginBtn.style.pointerEvents = 'auto';
+        headerIcons.prepend(elements.loginBtn);
+        console.log('Login button recreated');
+        // Додаємо обробник для нової кнопки
+        elements.loginBtn.addEventListener('click', (e) => {
+            if (elements.loginModal) {
+                elements.loginModal.classList.remove('hidden');
+                elements.loginModal.style.display = 'block';
+                elements.loginModal.style.zIndex = '1000';
+                document.body.classList.add('modal-open');
+                console.log('Login modal opened');
+            } else {
+                console.error('Login modal not found');
+            }
+        });
+    }
+    if (elements.loginBtn) {
+        elements.loginBtn.classList.remove('hidden');
+        elements.loginBtn.style.display = 'inline-block';
+        console.log('Login button shown');
+    }
+    const profileContainer = document.querySelector('.profile-container');
+    const notificationContainer = document.querySelector('.notification-container');
+    if (profileContainer) {
+        profileContainer.classList.add('hidden');
+        profileContainer.style.display = 'none'; // Явне приховування
+        const profileInfo = profileContainer.querySelector('.profile-info p');
+        if (profileInfo) profileInfo.textContent = ''; // Очищаємо ім'я
+        const profileAvatar = profileContainer.querySelector('.profile-avatar');
+        if (profileAvatar) profileAvatar.style.display = 'none'; // Приховуємо фото
+        console.log('Profile container hidden:', {
+            hasHiddenClass: profileContainer.classList.contains('hidden'),
+            display: profileContainer.style.display
+        });
+    }
+    if (notificationContainer) {
+        notificationContainer.classList.add('hidden');
+        notificationContainer.style.display = 'none';
+    }
+    if (elements.studentsTable) elements.studentsTable.classList.add('hidden');
+    if (elements.addStudentBtn) elements.addStudentBtn.classList.add('hidden');
+    // Очищаємо таблицю студентів
+    students = [];
+    renderTable();
+}
+
+// Функція для закриття модального вікна
+function closeModal(modal) {
+    if (modal) {
+        console.log('Закриття модального вікна:', modal.id, 'перед закриттям', {
+            hasHiddenClass: modal.classList.contains('hidden'),
+            display: getComputedStyle(modal).display,
+            visibility: getComputedStyle(modal).visibility
+        });
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+        modal.style.zIndex = '-1';
+        document.body.classList.remove('modal-open');
+        if (modal === elements.addStudentForm || modal === elements.loginModal || modal === elements.registerModal) {
+            modal.querySelector('form')?.reset();
+        }
+        console.log('Закриття модального вікна:', modal.id, 'після закриття', {
+            hasHiddenClass: modal.classList.contains('hidden'),
+            display: getComputedStyle(modal).display,
+            visibility: getComputedStyle(modal).visibility
+        });
+    } else {
+        console.error('Модальне вікно не знайдено');
+    }
+}
+
+// Ініціалізація після завантаження сторінки
 document.addEventListener("DOMContentLoaded", async function () {
     console.log("DOMContentLoaded triggered");
 
@@ -330,122 +603,333 @@ document.addEventListener("DOMContentLoaded", async function () {
     elements.logoutButton = document.getElementById("logout");
     elements.formTitle = document.getElementById("formTitle");
     elements.submitBtn = document.getElementById("submitBtn");
+    elements.loginModal = document.getElementById('loginModal');
+    elements.loginForm = document.getElementById('loginForm');
+    elements.registerModal = document.getElementById('registerModal');
+    elements.registerForm = document.getElementById('registerForm');
+    elements.studentsTable = document.getElementById('studentsTable');
 
-    // Ініціалізація: завантажуємо студентів і рендеримо таблицю
-    await loadStudents();
-    renderTable();
-
-    // Слухачі подій
-    elements.addStudentBtn.addEventListener("click", function () {
-        elements.formTitle.textContent = "Add New Student";
-        elements.submitBtn.textContent = "Add Student";
-        elements.addStudentFormElement.reset();
-        elements.addStudentForm.querySelector("#studentId").value = "";
-        elements.addStudentForm.classList.remove("hidden");
-        document.body.classList.add("modal-open");
-        editingStudentRow = null;
+    // Дебаг: перевірка ініціалізації елементів
+    console.log('Елементи ініціалізовані:', {
+        loginModal: !!elements.loginModal,
+        loginForm: !!elements.loginForm,
+        registerModal: !!elements.registerModal,
+        registerForm: !!elements.registerForm,
+        studentsTable: !!elements.studentsTable,
+        headerIcons: !!document.querySelector('.header-icons')
     });
 
-    document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
-        const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
-        if (elements.mainCheckbox.checked) {
-            students = [];
-            currentPage = 1;
-        } else if (checkedBoxes.length > 0) {
-            const indicesToDelete = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.index, 10)).sort((a, b) => b - a);
-            indicesToDelete.forEach(index => students.splice(index, 1));
-            currentPage = Math.min(currentPage, Math.ceil(students.length / studentsPerPage) || 1);
-        } else if (studentToDelete !== null) {
-            students.splice(studentToDelete, 1);
-            studentToDelete = null;
-            currentPage = Math.min(currentPage, Math.ceil(students.length / studentsPerPage) || 1);
+    // Динамічне створення кнопки логіну
+    const headerIcons = document.querySelector('.header-icons');
+    if (headerIcons && !elements.loginBtn) {
+        elements.loginBtn = document.createElement('button');
+        elements.loginBtn.textContent = 'Увійти';
+        elements.loginBtn.className = 'login-btn';
+        elements.loginBtn.style.display = 'inline-block';
+        elements.loginBtn.style.pointerEvents = 'auto';
+        headerIcons.prepend(elements.loginBtn);
+        console.log('Login button added to .header-icons');
+    } else if (!headerIcons) {
+        console.error('Елемент .header-icons не знайдено');
+    }
+
+    // Обробник кнопки логіну
+    if (elements.loginBtn) {
+        elements.loginBtn.addEventListener('click', (e) => {
+            if (elements.loginModal) {
+                elements.loginModal.classList.remove('hidden');
+                elements.loginModal.style.display = 'block';
+                elements.loginModal.style.zIndex = '1000';
+                document.body.classList.add('modal-open');
+                console.log('Login modal opened');
+            } else {
+                console.error('Login modal not found');
+            }
+        });
+    }
+
+    // Обробник форми логіну
+    if (elements.loginForm) {
+        elements.loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usernameInput = elements.loginForm.querySelector('#username');
+            const passwordInput = elements.loginForm.querySelector('#password');
+            
+            if (!usernameInput || !passwordInput) {
+                console.error('Поля #username або #password не знайдено');
+                return;
+            }
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            console.log('Login attempt:', { username, password });
+
+            if (!username || !password) {
+                alert('Будь ласка, заповніть усі поля');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth.php?action=login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('Login response:', result);
+
+                if (result.success) {
+                    closeModal(elements.loginModal);
+                    showAuthenticatedUI(username); // Оновлюємо UI одразу після входу
+                    await loadStudents();
+                } else {
+                    alert(result.error || 'Невірний логін або пароль');
+                    passwordInput.value = '';
+                }
+            } catch (error) {
+                console.error('Помилка логіну:', error);
+                alert('Виникла помилка під час входу. Спробуйте ще раз.');
+                passwordInput.value = '';
+            }
+        });
+    }
+
+    // Обробник форми реєстрації
+    if (elements.registerForm) {
+        elements.registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usernameInput = elements.registerForm.querySelector('#registerUsername');
+            const passwordInput = elements.registerForm.querySelector('#registerPassword');
+            const emailInput = elements.registerForm.querySelector('#registerEmail');
+
+            if (!usernameInput || !passwordInput || !emailInput) {
+                console.error('Поля #registerUsername, #registerPassword або #registerEmail не знайдено');
+                return;
+            }
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const email = emailInput.value.trim();
+
+            if (!username || !password || !email) {
+                alert('Будь ласка, заповніть усі поля');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth.php?action=register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, email }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    closeModal(elements.registerModal);
+                    showAuthenticatedUI(username); // Оновлюємо UI одразу після реєстрації
+                    await loadStudents();
+                } else {
+                    alert(result.error || 'Помилка реєстрації');
+                    passwordInput.value = '';
+                }
+            } catch (error) {
+                console.error('Помилка реєстрації:', error);
+                alert('Виникла помилка під час реєстрації. Спробуйте ще раз.');
+                passwordInput.value = '';
+            }
+        });
+    }
+
+    // Закриття модальних вікон
+    [elements.loginModal, elements.registerModal, elements.addStudentForm, elements.deleteConfirmation].forEach(modal => {
+        if (modal) {
+            const closeBtn = modal.querySelector('.closeIcon');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => closeModal(modal));
+            }
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal);
+                }
+            });
         }
-        elements.deleteConfirmation.classList.add("hidden");
-        saveStudents();
-        updateCache();
-        renderTable();
     });
+
+    if (elements.addStudentBtn) {
+        elements.addStudentBtn.addEventListener("click", function () {
+            elements.formTitle.textContent = "Додати нового студента";
+            elements.submitBtn.textContent = "Додати студента";
+            elements.addStudentForm.querySelector("#studentId").value = "";
+            elements.addStudentForm.querySelector("form").reset();
+            elements.addStudentForm.classList.remove("hidden");
+            elements.addStudentForm.style.display = 'block';
+            elements.addStudentForm.style.zIndex = '1000';
+            document.body.classList.add("modal-open");
+            editingStudentRow = null;
+        });
+    }
+
+    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener("click", async function () {
+            const checkedBoxes = document.querySelectorAll("td input[type=\"checkbox\"]:checked");
+            try {
+                if (elements.mainCheckbox.checked) {
+                    await fetch('/api/students.php', { 
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+                    students = [];
+                    currentPage = 1;
+                } else if (checkedBoxes.length > 0) {
+                    const indicesToDelete = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.index, 10)).sort((a, b) => b - a);
+                    for (const index of indicesToDelete) {
+                        const studentId = students[index].id;
+                        await fetch(`/api/students.php?id=${studentId}`, { 
+                            method: 'DELETE',
+                            credentials: 'include'
+                        });
+                        students.splice(index, 1);
+                    }
+                    currentPage = Math.min(currentPage, Math.ceil(students.length / studentsPerPage) || 1);
+                } else if (studentToDelete !== null) {
+                    const studentId = students[studentToDelete].id;
+                    await fetch(`/api/students.php?id=${studentId}`, { 
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+                    students.splice(studentToDelete, 1);
+                    studentToDelete = null;
+                    currentPage = Math.min(currentPage, Math.ceil(students.length / studentsPerPage) || 1);
+                }
+                closeModal(elements.deleteConfirmation);
+                await loadStudents();
+            } catch (error) {
+                console.error("Error deleting students:", error);
+                alert("Не вдалося видалити студентів. Спробуйте ще раз.");
+            }
+        });
+    }
+
+    const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener("click", function () {
+            closeModal(elements.deleteConfirmation);
+            studentToDelete = null;
+            elements.mainCheckbox.checked = false;
+            document.querySelectorAll("td input[type=\"checkbox\"]").forEach(cb => cb.checked = false);
+        });
+    }
 
     document.querySelectorAll(".fa-xmark.closeIcon").forEach(icon => {
         icon.addEventListener("click", function () {
             const modal = icon.closest("div");
-            modal.classList.add("hidden");
-            document.body.classList.remove("modal-open");
-            studentToDelete = null;
-            elements.mainCheckbox.checked = false;
-            document.querySelectorAll("td input[type=\"checkbox\"]").forEach(cb => cb.checked = false);
-            if (modal === elements.addStudentForm) {
-                elements.addStudentFormElement.reset();
-            }
+            closeModal(modal);
         });
     });
 
-    document.getElementById("cancelDeleteBtn").addEventListener("click", function () {
-        elements.deleteConfirmation.classList.add("hidden");
-        studentToDelete = null;
-    });
+    if (elements.addStudentFormElement) {
+        elements.addStudentFormElement.addEventListener("submit", addStudent);
+    }
 
-    elements.addStudentFormElement.addEventListener("submit", addStudent);
+    const addOkBtn = document.getElementById("addOkBtn");
+    if (addOkBtn) {
+        addOkBtn.addEventListener("click", function () {
+            closeModal(elements.addStudentForm);
+        });
+    }
 
-    document.getElementById("addOkBtn").addEventListener("click", function () {
-        elements.addStudentForm.classList.add("hidden");
-        document.body.classList.remove("modal-open");
-        elements.addStudentFormElement.reset();
-    });
+    const prevPageBtn = document.getElementById("prev-page");
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener("click", function () {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+    }
 
-    document.getElementById("prev-page").addEventListener("click", function () {
-        if (currentPage > 1) {
-            currentPage--;
-            renderTable();
-        }
-    });
+    const nextPageBtn = document.getElementById("next-page");
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener("click", function () {
+            if (currentPage < Math.ceil(students.length / studentsPerPage)) {
+                currentPage++;
+                renderTable();
+            }
+        });
+    }
 
-    document.getElementById("next-page").addEventListener("click", function () {
-        if (currentPage < Math.ceil(students.length / studentsPerPage)) {
-            currentPage++;
-            renderTable();
-        }
-    });
+    if (elements.bellIcon) {
+        elements.bellIcon.addEventListener("click", function () {
+            elements.notificationDropdown.classList.toggle("show");
+            elements.indicator.classList.remove("show");
+        });
 
-    elements.bellIcon.addEventListener("click", function () {
-        elements.notificationDropdown.classList.toggle("show");
-        elements.indicator.classList.remove("show");
-    });
+        elements.bellIcon.addEventListener("dblclick", function () {
+            elements.indicator.classList.toggle("show");
+            elements.notificationDropdown.classList.toggle("show");
+            elements.bellIcon.classList.add("bell-animation");
+            setTimeout(() => elements.bellIcon.classList.remove("bell-animation"), 500);
+        });
+    }
 
     document.addEventListener("click", function (e) {
-        if (!elements.bellIcon.contains(e.target) && !elements.notificationDropdown.contains(e.target)) {
+        if (elements.bellIcon && elements.notificationDropdown && !elements.bellIcon.contains(e.target) && !elements.notificationDropdown.contains(e.target)) {
             elements.notificationDropdown.classList.remove("show");
         }
     });
 
-    elements.bellIcon.addEventListener("dblclick", function () {
-        elements.indicator.classList.toggle("show");
-        elements.notificationDropdown.classList.toggle("show");
-        elements.bellIcon.classList.add("bell-animation");
-        setTimeout(() => elements.bellIcon.classList.remove("bell-animation"), 500);
-    });
-
-    elements.profileContainer.addEventListener("click", function (e) {
-        e.stopPropagation();
-        elements.dropdownMenu.style.display = elements.dropdownMenu.style.display === "block" ? "none" : "block";
-    });
+    if (elements.profileContainer) {
+        elements.profileContainer.addEventListener("click", function (e) {
+            e.stopPropagation();
+            elements.dropdownMenu.style.display = elements.dropdownMenu.style.display === "block" ? "none" : "block";
+        });
+    }
 
     document.addEventListener("click", function (e) {
-        if (!elements.profileContainer.contains(e.target)) {
+        if (elements.profileContainer && !elements.profileContainer.contains(e.target)) {
             elements.dropdownMenu.style.display = "none";
         }
     });
 
-    elements.logoutButton.addEventListener("click", function () {
-        alert("You logged out!");
-    });
-
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-            navigator.serviceWorker.register("/sw.js").then(
-                registration => console.log("Service Worker registered:", registration),
-                error => console.log("Service Worker registration failed:", error)
-            );
+    if (elements.logoutButton) {
+        elements.logoutButton.addEventListener("click", async function () {
+            try {
+                const response = await fetch('/api/auth.php?action=logout', { 
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert("Ви вийшли з системи!");
+                    // Оновлюємо UI
+                    showUnauthenticatedUI();
+                    // Очищаємо дані студентів
+                    students = [];
+                    renderTable();
+                } else {
+                    console.error("Logout failed:", data.error);
+                    alert("Не вдалося вийти. Спробуйте ще раз.");
+                }
+            } catch (error) {
+                console.error("Logout failed:", error);
+                alert("Не вдалося вийти. Спробуйте ще раз.");
+            }
         });
     }
+
+    await checkAuth();
 });
