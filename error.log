@@ -1,0 +1,110 @@
+[22-May-2025 02:37:26 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 02:37:26 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 02:37:27 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 02:37:27 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 02:37:28 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 02:37:28 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 02:37:30 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 02:37:30 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:25 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:25 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:27 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:27 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:27 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:27 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:27 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:27 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:28 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:28 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:28 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:28 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:28 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:28 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:34 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:34 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:35 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:10:35 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:12:13 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:12:13 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:13:27 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:13:27 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:17:23 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:17:23 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:24:53 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:24:53 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:25:30 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:25:30 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:26:18 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\api/../../vendor/autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:26:18 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\api/../../vendor/autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:30:03 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\apiD:\university\year2-sem2\pwi\vendor\autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[22-May-2025 03:30:03 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\apiD:\university\year2-sem2\pwi\vendor\autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[26-May-2025 20:25:49 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\apiD:\university\year2-sem2\pwi\vendor\autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[26-May-2025 20:25:49 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\apiD:\university\year2-sem2\pwi\vendor\autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[26-May-2025 20:25:52 Europe/Berlin] PHP Warning:  require_once(D:\university\year2-sem2\pwi\apiD:\university\year2-sem2\pwi\vendor\autoload.php): Failed to open stream: No such file or directory in D:\university\year2-sem2\pwi\api\auth.php on line 17
+[26-May-2025 20:25:52 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\university\year2-sem2\pwi\apiD:\university\year2-sem2\pwi\vendor\autoload.php' (include_path='C:\xampp\php\PEAR') in D:\university\year2-sem2\pwi\api\auth.php:17
+Stack trace:
+#0 {main}
+  thrown in D:\university\year2-sem2\pwi\api\auth.php on line 17

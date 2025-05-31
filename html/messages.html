@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="http://localhost:3000/socket.io/socket.io.js" defer></script>
+  <script src="messages.js" defer></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="flex h-screen">
+    <div class="w-1/4 bg-white p-4 border-r">
+      <h2 class="text-xl font-bold mb-4">Chat room</h2>
+      <button id="newChatBtn" class="bg-purple-500 text-white px-4 py-2 rounded mb-2 w-full">+ New chat room</button>
+      <div id="chatList" class="space-y-2"></div>
+    </div>
+    <div class="w-3/4 p-4 flex flex-col">
+      <h2 class="text-xl font-bold mb-4">Chatroom Admin</h2>
+      <div class="flex mb-4">
+        <div class="w-1/3 border p-2">
+          <h3 class="font-semibold">Members</h3>
+          <div id="membersList" class="space-y-2"></div>
+          <button id="addMemberBtn" class="bg-purple-500 text-white px-2 py-1 rounded mt-2">+ Add</button>
+        </div>
+        <div class="w-2/3 border p-2 flex-1">
+          <h3 class="font-semibold">Messages</h3>
+          <div id="messageHistory" class="h-64 overflow-y-auto mb-2 border p-2"></div>
+          <input id="messageInput" type="text" class="w-full p-2 border rounded" placeholder="Type a message...">
+          <button id="sendMessageBtn" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="notificationBell" class="fixed top-4 right-4 cursor-pointer">
+    <i class="fas fa-bell text-2xl"></i>
+    <span id="notificationIndicator" class="hidden bg-red-500 text-white rounded-full w-3 h-3 absolute top-0 right-0"></span>
+  </div>
+</body>
+</html>
