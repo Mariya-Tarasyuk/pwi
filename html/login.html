@@ -32,17 +32,28 @@
             const response = await fetch('/api/auth.php?action=login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ username, password }),
+                credentials: 'include'
             });
             const data = await response.json();
 
-            if (data.success) {
-                // Зберігаємо токен у localStorage
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('username', data.username);
-                window.location.href = '/html/students.html';
+            if (data.success && data.username) {
+                // Синхронізуємо з Node.js і отримуємо JWT
+                const syncRes = await fetch('http://192.168.0.29:3000/api/sync-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+                const syncData = await syncRes.json();
+                if (syncData.token) {
+                    localStorage.setItem('token', syncData.token);
+                    localStorage.setItem('username', username);
+                    window.location.href = '/html/messages.html'; // Переходимо одразу в чат
+                } else {
+                    alert('Не вдалося отримати токен для чату');
+                }
             } else {
-                alert('Помилка входу: ' + data.error);
+                alert('Помилка входу: ' + (data.error || ''));
             }
         });
     </script>

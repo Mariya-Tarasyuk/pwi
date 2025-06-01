@@ -914,10 +914,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 });
                 const data = await response.json();
                 if (data.success) {
+                    localStorage.removeItem('token'); // ДОДАТИ ЦЕ
+                    localStorage.removeItem('username'); // ДОДАТИ ЦЕ
                     alert("Ви вийшли з системи!");
-                    // Оновлюємо UI
                     showUnauthenticatedUI();
-                    // Очищаємо дані студентів
                     students = [];
                     renderTable();
                 } else {
