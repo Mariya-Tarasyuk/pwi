@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await res.json();
         if (data.success && data.username) {
             username = data.username;
-            token = data.token; // Припускаємо, що API повертає токен
+            token = data.token; // Assumes API returns token
+            console.log('Authenticated user:', username, 'Token:', token);
         } else {
             alert("Ви не авторизовані. Будь ласка, увійдіть у систему.");
             window.location.href = '/html/login.html';
@@ -56,10 +57,76 @@ document.addEventListener('DOMContentLoaded', async () => {
         return params.get('chatId');
     }
 
+    // Initialize chat from URL
     const initialChatId = getChatIdFromUrl();
     if (initialChatId) {
         currentChatId = initialChatId;
-        joinChat(currentChatId);
+        console.log('Initial chatId from URL:', currentChatId);
+        joinChat(currentChatId); // Load chat
+    } else {
+        console.log('No chatId in URL, waiting for chat selection');
+        messageHistory.innerHTML = '<p>Select a chat to start messaging</p>';
+    }
+
+    function joinChat(chatId) {
+        console.log('Joining chat:', chatId);
+        if (!chatId) {
+            console.error('chatId is undefined in joinChat');
+            messageHistory.innerHTML = '<p>Error: No chat selected</p>';
+            return;
+        }
+        messageHistory.innerHTML = '';
+        currentChatId = chatId;
+
+        // Fetch messages
+        console.log('Token before fetch:', token);
+        console.log('Fetching messages for chatId:', chatId);
+        fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/messages?chatId=${chatId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                return res.json();
+            })
+            .then(data => {
+                console.log('Fetched messages:', data);
+                if (data.success && Array.isArray(data.messages) && data.messages.length > 0) {
+                    messageHistory.innerHTML = '';
+                    data.messages.forEach(msg => {
+                        messageHistory.innerHTML += `
+                            <p><strong>${msg.sender}</strong>: ${msg.content} 
+                            (${new Date(msg.timestamp).toISOString().slice(11, 16)})</p>
+                        `;
+                    });
+                    messageHistory.scrollTop = messageHistory.scrollHeight;
+                } else {
+                    console.warn('No messages or failed to load:', data.error || 'No data');
+                    messageHistory.innerHTML = '<p>No messages yet</p>';
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching messages:', err);
+                messageHistory.innerHTML = '<p>Error loading messages</p>';
+            });
+
+        // Fetch chat members
+        fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/chats?username=${encodeURIComponent(username)}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && Array.isArray(data.chats)) {
+                    const chat = data.chats.find(c => c._id === chatId);
+                    membersList.innerHTML = '';
+                    if (chat && Array.isArray(chat.members)) {
+                        chat.members.forEach(member => {
+                            membersList.innerHTML += `<div>${member}</div>`;
+                        });
+                    }
+                }
+            });
+
+        socket.emit('joinChat', chatId);
     }
 
     socket.on('message', (msg) => {
@@ -99,6 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         notificationBell.classList.remove('bell-animation');
     };
 
+    // Fetch and display chat list
     fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/chats?username=${encodeURIComponent(username)}`, {
         headers: { 'Authorization': `Bearer ${token}` }
     })
@@ -122,58 +190,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-    function joinChat(chatId) {
-        console.log('Joining chat:', chatId);
-        messageHistory.innerHTML = '';
-        currentChatId = chatId;
-
-        fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/messages?chatId=${chatId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        })
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-                return res.json();
-            })
-            .then(data => {
-                console.log('Fetched messages:', data);
-                if (data.success && Array.isArray(data.messages) && data.messages.length > 0) {
-                    messageHistory.innerHTML = '';
-                    data.messages.forEach(msg => {
-                        messageHistory.innerHTML += `
-                            <p><strong>${msg.sender}</strong>: ${msg.content} 
-                            (${new Date(msg.timestamp).toISOString().slice(11, 16)})</p>
-                        `;
-                    });
-                    messageHistory.scrollTop = messageHistory.scrollHeight;
-                } else {
-                    console.warn('No messages or failed to load:', data.error || 'No data');
-                    messageHistory.innerHTML = '<p>No messages yet</p>';
-                }
-            })
-            .catch(err => {
-                console.error('Error fetching messages:', err);
-                messageHistory.innerHTML = '<p>Error loading messages</p>';
-            });
-
-        fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/chats?username=${encodeURIComponent(username)}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success && Array.isArray(data.chats)) {
-                    const chat = data.chats.find(c => c._id === chatId);
-                    membersList.innerHTML = '';
-                    if (chat && Array.isArray(chat.members)) {
-                        chat.members.forEach(member => {
-                            membersList.innerHTML += `<div>${member}</div>`;
-                        });
-                    }
-                }
-            });
-
-        socket.emit('joinChat', chatId);
-    }
-
     sendMessageBtn.onclick = () => {
         const content = messageInput.value.trim();
         console.log('Sending message - chatId:', currentChatId, 'content:', content);
@@ -187,6 +203,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     };
+
+console.log('Current chatId before sending:', currentChatId);
+    socket.on('sendMessage', async (data) => {
+    console.log('Received sendMessage:', data);
+    const { chatId, content } = data;
+    if (!chatId || !content) {
+        console.error('Missing chatId or content:', { chatId, content });
+        return;
+    }
+    const message = new Message({ 
+        chatId, 
+        sender: socket.user.username,
+        content,
+        timestamp: new Date()
+    });
+
+    try {
+        const savedMessage = await message.save();
+        console.log('Message saved:', savedMessage);
+        io.to(chatId).emit('message', savedMessage);
+        // ... решта коду ...
+    } catch (err) {
+        console.error('Error saving message:', err);
+    }
+});
 
     const userSelectModal = document.getElementById('userSelectModal');
     const userList = document.getElementById('userList');

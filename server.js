@@ -7,9 +7,8 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 
 mongoose.connect('mongodb://localhost:27017/chatDB')
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error:', err));
-
+    .then(() => console.log('Connected to MongoDB successfully'))
+    .catch(err => console.error('MongoDB connection failed:', err));
 // Define schemas and models
 const userSchema = new mongoose.Schema({
     username: String,
@@ -56,8 +55,13 @@ const io = require('socket.io')(server, {
 });
 
 app.use(cors({
-    origin: allowedOrigins,
-    credentials: true
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }
 }));
 
 app.use(express.json());
@@ -65,12 +69,15 @@ app.use(express.json());
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-
+    console.log('Received token:', token);
     if (!token) return res.status(401).json({ success: false, error: 'No token provided' });
-
     jwt.verify(token, 'your-secret-key', (err, user) => {
-        if (err) return res.status(403).json({ success: false, error: 'Invalid token' });
+        if (err) {
+            console.log('Token verification failed:', err.message);
+            return res.status(403).json({ success: false, error: 'Invalid token' });
+        }
         req.user = user;
+        console.log('Authenticated user:', user);
         next();
     });
 };
@@ -186,38 +193,23 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sendMessage', async (data) => {
+    console.log('Received sendMessage:', data);
     const { chatId, content } = data;
+    if (!chatId || !content) {
+        console.error('Missing chatId or content:', { chatId, content });
+        return;
+    }
     const message = new Message({ 
         chatId, 
         sender: socket.user.username,
         content,
         timestamp: new Date()
     });
-
     try {
-        await message.save();
-        console.log(`Sending message to chat ${chatId} from ${socket.user.username}`);
-        io.to(chatId).emit('message', message);
-
-        const chat = await Chat.findById(chatId);
-        if (chat && chat.members) {
-            console.log(`Notifying members: ${chat.members}`);
-            chat.members.forEach(member => {
-                if (member !== socket.user.username) {
-                    io.to(member).emit('notification', {
-                        chatId,
-                        sender: socket.user.username,
-                        chatName: chat.name || chat.members.join(', ')
-                    });
-                    // Надсилаємо newMessage для сторінки студентів
-                    io.to(member).emit('newMessage', {
-                        chatId,
-                        sender: socket.user.username,
-                        chatName: chat.name || chat.members.join(', ')
-                    });
-                }
-            });
-        }
+        const savedMessage = await message.save();
+        console.log('Message saved:', savedMessage);
+        io.to(chatId).emit('message', savedMessage);
+        // ... notify members ...
     } catch (err) {
         console.error('Error saving message:', err);
     }
