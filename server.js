@@ -209,7 +209,18 @@ io.on('connection', (socket) => {
         const savedMessage = await message.save();
         console.log('Message saved:', savedMessage);
         io.to(chatId).emit('message', savedMessage);
-        // ... notify members ...
+        const chat = await Chat.findById(chatId);
+        if (chat && chat.members) {
+            console.log(`Notifying members: ${chat.members}`);
+            chat.members.forEach(member => {
+                if (member !== socket.user.username) {
+                    const notifData = { chatId, sender: socket.user.username, chatName: chat.name || chat.members.join(', ') };
+                    console.log(`Emitting notification to ${member}:`, notifData);
+                    io.to(member).emit('notification', notifData);
+                    io.to(member).emit('newMessage', notifData);
+                }
+            });
+        }
     } catch (err) {
         console.error('Error saving message:', err);
     }

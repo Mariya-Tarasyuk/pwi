@@ -931,63 +931,131 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     // Отримати username (якщо потрібно)
-    let username = null;
-    try {
-        const res = await fetch('/api/auth.php?action=check', { credentials: 'include' });
-        const data = await res.json();
-        if (data.success && data.username) {
-            username = data.username;
-        }
-    } catch (e) {}
-
-    let socket = null;
-    if (username) {
-        const socketUrl = `${window.location.protocol}//${window.location.hostname}:3000`;
-        socket = io(socketUrl, { query: { username } });
+ let username = null;
+try {
+    const res = await fetch('/api/auth.php?action=check', { credentials: 'include' });
+    const data = await res.json();
+    if (data.success && data.username) {
+        username = data.username;
+        console.log('Username retrieved:', username);
+    } else {
+        console.warn('No username in auth response:', data);
     }
+} catch (e) {
+    console.error('Error checking auth:', e);
+}
 
-    const notificationBell = document.getElementById('notificationBell');
-    const bellIcon = notificationBell.querySelector('i.fas.fa-bell');
-    const notificationIndicator = document.getElementById('notification-indicator');
-    const notificationDropdown = document.querySelector('.notification-dropdown');
-
-    // Клік по дзвіночку: показати/сховати меню, прибрати анімацію
-    if (notificationBell) {
-        notificationBell.onclick = (e) => {
-            e.stopPropagation();
-            notificationDropdown.classList.toggle('show');
-            notificationIndicator.classList.add('hidden');
-            bellIcon.classList.remove('bell-animation');
-        };
-    }
-
-    // Сховати меню при кліку поза ним
-    document.addEventListener('click', (e) => {
-        if (notificationDropdown && !notificationDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
-            notificationDropdown.classList.remove('show');
-        }
+let socket = null;
+if (username) {
+    const socketUrl = `${window.location.protocol}//${window.location.hostname}:3000`;
+    socket = io(socketUrl, { query: { username } });
+    socket.on('connect', () => {
+        console.log('Socket connected with ID:', socket.id);
     });
+    socket.on('connect_error', (err) => {
+        console.error('Socket connection error:', err.message);
+    });
+} else {
+    console.warn('Socket not initialized: No username');
+}
 
-    // Слухаємо нові повідомлення
-    if (socket) {
-    socket.on('newMessage', (msg) => {
-        console.log('Received newMessage:', msg);
-        notificationIndicator.classList.add('show');
-        bellIcon.classList.add('bell-animation');
-        void bellIcon.offsetWidth;
-        if (notificationDropdown) {
-            const noNotif = notificationDropdown.querySelector('p');
-            if (noNotif) noNotif.remove();
-            const notif = document.createElement('div');
-            notif.className = 'notification-item cursor-pointer';
-            notif.textContent = `Нове повідомлення від ${msg.sender} у чаті "${msg.chatName}"`;
-            notif.onclick = () => {
-                window.location.href = `/html/messages.html?chatId=${encodeURIComponent(msg.chatId)}`;
-            };
-            notificationDropdown.prepend(notif);
-        }
+// Notification elements (assumed to be in elements object)
+elements.notificationBell = document.getElementById('notificationBell');
+elements.bellIcon = elements.notificationBell ? elements.notificationBell.querySelector('i.fas.fa-bell') : null;
+elements.indicator = document.getElementById('notification-indicator');
+elements.notificationDropdown = document.querySelector('.notification-dropdown');
+
+if (!elements.notificationBell || !elements.bellIcon || !elements.indicator || !elements.notificationDropdown) {
+    console.error('Notification elements missing at initialization:', {
+        notificationBell: !!elements.notificationBell,
+        bellIcon: !!elements.bellIcon,
+        indicator: !!elements.indicator,
+        notificationDropdown: !!elements.notificationDropdown
     });
 }
 
-    await checkAuth();
+// Click handler for bell
+if (elements.notificationBell) {
+    elements.bellIcon.addEventListener('click', () => {
+        console.log('Notification bell clicked');
+        elements.notificationDropdown.classList.toggle('show');
+        elements.indicator.classList.remove('show');
+        console.log('Indicator hidden, classList:', elements.indicator.classList);
+        console.log('Dropdown toggled, show:', elements.notificationDropdown.classList.contains('show'));
+    });
+
+    // Double-click handler
+    elements.bellIcon.addEventListener('dblclick', () => {
+        console.log('Notification bell double-clicked');
+        elements.indicator.classList.toggle('show');
+        elements.notificationDropdown.classList.toggle('show');
+        elements.bellIcon.classList.add('bell-animation');
+        setTimeout(() => {
+            elements.bellIcon.classList.remove('bell-animation');
+            console.log('Bell animation removed after double-click, classList:', elements.bellIcon.classList);
+        }, 700); // Match CSS animation duration (0.7s)
+        console.log('Indicator toggled, classList:', elements.indicator.classList);
+    });
+}
+
+// Hide dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    if (elements.notificationDropdown && !elements.notificationDropdown.contains(e.target) && !elements.bellIcon.contains(e.target) && !elements.notificationBell.contains(e.target)) {
+        elements.notificationDropdown.classList.remove('show');
+        console.log('Dropdown hidden due to outside click');
+    }
+});
+
+// Socket notification handler
+if (socket) {
+    socket.on('newMessage', (msg) => {
+        console.log('Received newMessage:', msg);
+        if (!elements.indicator || !elements.bellIcon || !elements.notificationDropdown) {
+            console.error('Notification elements not found during newMessage:', {
+                indicator: !!elements.indicator,
+                bellIcon: !!elements.bellIcon,
+                notificationDropdown: !!elements.notificationDropdown
+            });
+            return;
+        }
+
+        // Show indicator
+        elements.indicator.classList.add('show');
+        console.log('Indicator updated, classList:', elements.indicator.classList, 'style:', window.getComputedStyle(elements.indicator));
+
+        // Trigger bell animation
+        elements.bellIcon.classList.remove('bell-animation');
+        void elements.bellIcon.offsetWidth; // Force reflow
+        elements.bellIcon.classList.add('bell-animation');
+        console.log('Bell animation triggered, classList:', elements.bellIcon.classList, 'style:', window.getComputedStyle(elements.bellIcon));
+
+        // Remove animation class after it completes
+        setTimeout(() => {
+            if (elements.bellIcon) {
+                elements.bellIcon.classList.remove('bell-animation');
+                console.log('Bell animation removed after timeout, classList:', elements.bellIcon.classList);
+            }
+        }, 700); // Match CSS animation duration (0.7s)
+
+        // Update dropdown
+        const noNotif = elements.notificationDropdown.querySelector('.no-notification');
+        if (noNotif) {
+            noNotif.remove();
+            console.log('Removed no-notification placeholder');
+        }
+        const notif = document.createElement('div');
+        notif.className = 'notification-item cursor-pointer';
+        notif.textContent = `Нове повідомлення від ${msg.sender} у чаті "${msg.chatName}"`;
+        notif.onclick = () => {
+            console.log('Navigating to chat:', msg.chatId);
+            window.location.href = `/html/messages.html?chatId=${encodeURIComponent(msg.chatId)}`;
+        };
+        elements.notificationDropdown.prepend(notif);
+        console.log('Notification added to dropdown');
+    });
+} else {
+    console.warn('Socket not available for notifications');
+}
+
+    // await checkAuth();
 });
