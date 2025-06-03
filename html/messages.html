@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Messages</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="http://192.168.0.29:3000/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script src="../js/messages.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body class="bg-gray-100 font-sans">
   <div class="w-full flex items-center justify-between bg-gray-400 px-4 py-2">
@@ -56,5 +57,32 @@
     <button id="closeUserModal" class="ml-2 px-4 py-2 rounded border">Cancel</button>
   </div>
 </div>
+<script>
+  const username = 'YourUsername'; // Тут має бути справжній username, отриманий з сесії або бекенду
+
+const socketUrl = `${window.location.protocol}//${window.location.hostname}:3000`;
+socket = io(socketUrl, { query: { username } });
+  fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/chats?username=${encodeURIComponent(username)}`)
+  .then(response => response.json())
+  .then(data => {
+    // Обробка отриманих даних
+  });
+
+  const notificationBell = document.getElementById('notificationBell');
+  const notificationIndicator = document.getElementById('notificationIndicator');
+
+  // Слухаємо подію нового повідомлення
+  socket.on('newMessage', (msg) => {
+    // Показати червону крапку
+    notificationIndicator.classList.remove('hidden');
+    // Додати анімацію
+    notificationBell.classList.add('animate-bounce');
+    // При кліку на дзвіночок — прибрати анімацію і крапку
+    notificationBell.onclick = () => {
+      notificationIndicator.classList.add('hidden');
+      notificationBell.classList.remove('animate-bounce');
+    };
+  });
+</script>
 </body>
 </html>

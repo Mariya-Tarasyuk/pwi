@@ -218,7 +218,7 @@ async function addStudent(e) {
     const lastName = capitalizeFirstLetter(form.querySelector("#addLastName").value);
     const birthday = form.querySelector("#addBirthday").value;
 
-    // Перевірка на дублювання (тільки при додаванні, а не при редагуванні)
+    // Перевірка на дублювання (тільки при доданні, а не при редагуванні)
     if (editingStudentRow === null) {
         const isDuplicate = checkForDuplicateStudent(firstName, lastName, birthday);
         if (isDuplicate) {
@@ -507,7 +507,7 @@ function showAuthenticatedUI(username) {
 // Показ UI для неавтентифікованого користувача
 function showUnauthenticatedUI() {
     const headerIcons = document.querySelector('.header-icons');
-    if (headerIcons && !elements.loginBtn) {
+    
         elements.loginBtn = document.createElement('button');
         elements.loginBtn.textContent = 'Увійти';
         elements.loginBtn.className = 'login-btn';
@@ -527,7 +527,6 @@ function showUnauthenticatedUI() {
                 console.error('Login modal not found');
             }
         });
-    }
     if (elements.loginBtn) {
         elements.loginBtn.classList.remove('hidden');
         elements.loginBtn.style.display = 'inline-block';
@@ -930,6 +929,65 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
         });
     }
+
+    // Отримати username (якщо потрібно)
+    let username = null;
+    try {
+        const res = await fetch('/api/auth.php?action=check', { credentials: 'include' });
+        const data = await res.json();
+        if (data.success && data.username) {
+            username = data.username;
+        }
+    } catch (e) {}
+
+    let socket = null;
+    if (username) {
+        const socketUrl = `${window.location.protocol}//${window.location.hostname}:3000`;
+        socket = io(socketUrl, { query: { username } });
+    }
+
+    const notificationBell = document.getElementById('notificationBell');
+    const bellIcon = notificationBell.querySelector('i.fas.fa-bell');
+    const notificationIndicator = document.getElementById('notification-indicator');
+    const notificationDropdown = document.querySelector('.notification-dropdown');
+
+    // Клік по дзвіночку: показати/сховати меню, прибрати анімацію
+    if (notificationBell) {
+        notificationBell.onclick = (e) => {
+            e.stopPropagation();
+            notificationDropdown.classList.toggle('show');
+            notificationIndicator.classList.add('hidden');
+            bellIcon.classList.remove('bell-animation');
+        };
+    }
+
+    // Сховати меню при кліку поза ним
+    document.addEventListener('click', (e) => {
+        if (notificationDropdown && !notificationDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
+            notificationDropdown.classList.remove('show');
+        }
+    });
+
+    // Слухаємо нові повідомлення
+    if (socket) {
+    socket.on('newMessage', (msg) => {
+        console.log('Received newMessage:', msg);
+        notificationIndicator.classList.add('show');
+        bellIcon.classList.add('bell-animation');
+        void bellIcon.offsetWidth;
+        if (notificationDropdown) {
+            const noNotif = notificationDropdown.querySelector('p');
+            if (noNotif) noNotif.remove();
+            const notif = document.createElement('div');
+            notif.className = 'notification-item cursor-pointer';
+            notif.textContent = `Нове повідомлення від ${msg.sender} у чаті "${msg.chatName}"`;
+            notif.onclick = () => {
+                window.location.href = `/html/messages.html?chatId=${encodeURIComponent(msg.chatId)}`;
+            };
+            notificationDropdown.prepend(notif);
+        }
+    });
+}
 
     await checkAuth();
 });

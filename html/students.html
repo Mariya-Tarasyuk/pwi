@@ -6,6 +6,7 @@
     <title>Students</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="/js/script.js" defer></script>
     <script src="https://kit.fontawesome.com/e752585ce8.js" crossorigin="anonymous"></script>
 </head>
@@ -14,11 +15,15 @@
         <h1 class="CMS"><a href="students.html">CMS</a></h1>
         <div class="header-icons">
             <div class="notification-container">
-                <i class="fa-solid fa-bell notification-bell"></i>
-                <span class="notification-indicator show"></span>
+                <span id="notificationBell" class="relative cursor-pointer">
+                  <i class="fas fa-bell"></i>
+                  <span id="notification-indicator" class="hidden absolute -top-1 -right-1 bg-red-500 rounded-full w-3 h-3"></span>
+                </span>
                 <div class="notification-dropdown">
                     <a href="messages.html">go to messages</a>
-                    <p>No new notifications</p>
+                    <ul id="notificationList">
+                        <li class="notification-item"> </li>
+                    </ul>
                 </div>
             </div>
             <div class="profile-container">
@@ -29,7 +34,7 @@
                 <div class="dropdown-menu">
                     <div class="profile-info">
                         <img src="/images/avatar-1.jpg" alt="Profile">
-                        <p>admin</p>
+                        <!-- <p>admin</p> -->
                     </div>
                     <ul>
                         <li>Profile</li>

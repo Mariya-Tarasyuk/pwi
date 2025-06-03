@@ -88,39 +88,30 @@ header {
 }
 
 .notification-dropdown {
-  position: absolute;
-  top: 40px;
-  right: 0;
-  background: #fcf7ec; /* Кремовий фон */
-  border: 1px solid #547b51; /* Середній зелений для межі */
-  border-radius: 5px;
-  width: 300px;
-  max-width: calc(100vw - 40px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 1000;
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 30px;
+    background: #fff;
+    border: 1px solid #ddd;
+    min-width: 220px;
+    z-index: 100;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 8px 0;
 }
 
 .notification-dropdown.show {
-  display: block;
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+    display: block;
 }
 
 .notification-item {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #547b51; /* Середній зелений для межі */
+    padding: 8px 16px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .notification-item:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .notification-item img {
@@ -147,17 +138,23 @@ header {
   padding: 8px 12px;
   border-radius: 5px;
 }
-
-.bell-animation {
-  animation: bellRing 0.5s ease-in-out;
+.notification-indicator {
+    display: none;
 }
-
+.notification-indicator.show {
+    display: block;
+}
+.bell-animation {
+  animation: bellRing 0.7s;
+}
 @keyframes bellRing {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(15deg); }
-  50% { transform: rotate(-15deg); }
-  75% { transform: rotate(10deg); }
-  100% { transform: rotate(0deg); }
+  0% { transform: rotate(0deg);}
+  15% { transform: rotate(15deg);}
+  30% { transform: rotate(-10deg);}
+  45% { transform: rotate(10deg);}
+  60% { transform: rotate(-6deg);}
+  75% { transform: rotate(4deg);}
+  100% { transform: rotate(0deg);}
 }
 
 /* Профіль */
